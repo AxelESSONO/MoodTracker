@@ -1,9 +1,7 @@
 package com.axel.moodtracker.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-
 import com.axel.moodtracker.R;
 
 public class MoodActivity extends AppCompatActivity {
