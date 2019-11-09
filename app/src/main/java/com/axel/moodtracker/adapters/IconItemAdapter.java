@@ -2,7 +2,6 @@ package com.axel.moodtracker.adapters;
 
 
 import android.content.Context;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +53,7 @@ public class IconItemAdapter extends BaseAdapter {
 
         //get item icon view
         String resourceName = "smiley_" + mnemonic;
-        ImageView itemIconView = convertView.findViewById(R.id.list_picture);
+        ImageView itemIconView = convertView.findViewById(R.id.item_happy_smiley);
         int resId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
         itemIconView.setImageResource(resId);
 
