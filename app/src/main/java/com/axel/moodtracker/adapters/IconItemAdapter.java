@@ -2,6 +2,8 @@ package com.axel.moodtracker.adapters;
 
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,20 +49,22 @@ public class IconItemAdapter extends BaseAdapter {
 
         convertView = inflater.inflate(R.layout.adapter_image, null);
 
-        // get information aboput smiley
+        // get information about smiley
         IconeItem currentItem = getItem(position);
         String mnemonic = currentItem.getMnemonic();
+        IconeItem pcolor = new IconeItem(currentItem.getName(),currentItem.getMnemonic(), currentItem.getColorSmiley());
 
         //get item icon view
         String resourceName = "smiley_" + mnemonic;
+        String resourceColor = pcolor.getColorSmiley();
+
         ImageView itemIconView = convertView.findViewById(R.id.item_happy_smiley);
         int resId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
         itemIconView.setImageResource(resId);
 
-        //set background color
-        String resourceColor;
-
+        itemIconView.setBackgroundColor(Color.parseColor(resourceColor));
 
         return convertView;
     }
+
 }

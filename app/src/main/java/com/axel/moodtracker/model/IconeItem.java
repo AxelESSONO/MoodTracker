@@ -3,23 +3,23 @@ package com.axel.moodtracker.model;
 public class IconeItem {
     // field
     private String name;
-    private String color;
+    private String colorSmiley;
     private String mnemonic;
 
     // constructor
-    public IconeItem(String name,String mnemonic, String color){
+    public IconeItem(String name,String mnemonic, String colorSmiley){
         this.name = name;
-        this.color = color;
+        this.colorSmiley = colorSmiley;
         this.mnemonic = mnemonic;
     }
 
     // methods
-    public void setColor(String color) {
-        this.color = color;
+    public String getColorSmiley() {
+        return colorSmiley;
     }
 
-    public String getColor() {
-        return color;
+    public void setColorSmiley(String colorSmiley) {
+        this.colorSmiley = colorSmiley;
     }
 
     public void setName(String name) {
