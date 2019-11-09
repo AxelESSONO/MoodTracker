@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:background="@color/colorGreen"
+        android:background="@color/colorBackgroundGreen"
         android:clickable="true"/>
 
 </LinearLayout>

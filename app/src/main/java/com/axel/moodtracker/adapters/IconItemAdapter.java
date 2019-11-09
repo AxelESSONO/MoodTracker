@@ -57,6 +57,10 @@ public class IconItemAdapter extends BaseAdapter {
         int resId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
         itemIconView.setImageResource(resId);
 
+        //set background color
+        String resourceColor;
+
+
         return convertView;
     }
 }
