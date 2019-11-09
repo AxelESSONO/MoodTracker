@@ -17,13 +17,13 @@ public class MoodActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mood);
 
         List<IconeItem> iconeItemList = new ArrayList<>();
-        iconeItemList.add(new IconeItem("smiley_disappointed", "red"));
-        iconeItemList.add(new IconeItem("smiley_sad", "grey"));
-        iconeItemList.add(new IconeItem("smiley_normal", "blue"));
-        iconeItemList.add(new IconeItem("smiley_happy", "green"));
-        iconeItemList.add(new IconeItem("smiley_super_happy", "yellow"));
+        iconeItemList.add(new IconeItem("smiley_disappointed", "disappointed" ,"red"));
+        iconeItemList.add(new IconeItem("smiley_sad", "sad" ,"grey"));
+        iconeItemList.add(new IconeItem("smiley_normal","normal", "blue"));
+        iconeItemList.add(new IconeItem("smiley_happy","happy","green"));
+        iconeItemList.add(new IconeItem("smiley_super_happy","super_happy","yellow"));
 
-        //get listView
+        //get listV iew
         ListView pictureListView = findViewById(R.id.list_picture);
         pictureListView.setAdapter(new IconItemAdapter(this, iconeItemList));
     }

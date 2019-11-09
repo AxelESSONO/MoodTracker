@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.IconeItem;
 
@@ -45,6 +47,17 @@ public class IconItemAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         convertView = inflater.inflate(R.layout.adapter_image, null);
+
+        // get information aboput smiley
+        IconeItem currentItem = getItem(position);
+        String mnemonic = currentItem.getMnemonic();
+
+        //get item icon view
+        String resourceName = "smiley_" + mnemonic;
+        ImageView itemIconView = convertView.findViewById(R.id.list_picture);
+        int resId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
+        itemIconView.setImageResource(resId);
+
         return convertView;
     }
 }

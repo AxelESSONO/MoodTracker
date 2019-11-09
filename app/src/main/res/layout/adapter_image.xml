@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:src="@drawable/smiley_happy"
         android:id="@+id/item_happy_smiley"
-        android:layout_margin="5dp"/>
+        android:layout_margin="5dp"
+        android:layout_gravity="center"/>
 
 </LinearLayout>

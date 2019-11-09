@@ -4,11 +4,13 @@ public class IconeItem {
     // field
     private String name;
     private String color;
+    private String mnemonic;
 
     // constructor
-    public IconeItem(String name, String color){
+    public IconeItem(String name,String mnemonic, String color){
         this.name = name;
         this.color = color;
+        this.mnemonic = mnemonic;
     }
 
     // methods
@@ -26,5 +28,9 @@ public class IconeItem {
 
     public String getName() {
         return name;
+    }
+
+    public String getMnemonic() {
+        return mnemonic;
     }
 }
