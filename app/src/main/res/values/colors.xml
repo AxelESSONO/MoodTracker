@@ -4,9 +4,9 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="colorBackgroundGreen">#55B617</color>
+    <color name="colorBackgroundRed">#AB1A49</color>
     <color name="colorBackgroundGrey">#808A89</color>
     <color name="colorBackgroundBleu">#3135D0</color>
-    <color name="colorBackgroundRed">#AB1A49</color>
+    <color name="colorBackgroundGreen">#55B617</color>
     <color name="colorBackgroundYellow">#D0E807</color>
 </resources>
