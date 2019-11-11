@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.IconeItem;
@@ -52,17 +53,24 @@ public class IconItemAdapter extends BaseAdapter {
         // get information about smiley
         IconeItem currentItem = getItem(position);
         String mnemonic = currentItem.getMnemonic();
-        IconeItem pcolor = new IconeItem(currentItem.getName(),currentItem.getMnemonic(), currentItem.getColorSmiley());
+        final IconeItem pcolor = new IconeItem(currentItem.getName(),currentItem.getMnemonic(), currentItem.getColorSmiley());
 
         //get item icon view
         String resourceName = "smiley_" + mnemonic;
         String resourceColor = pcolor.getColorSmiley();
 
-        ImageView itemIconView = convertView.findViewById(R.id.item_happy_smiley);
+        final ImageView itemIconView = convertView.findViewById(R.id.item_happy_smiley);
         int resId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
         itemIconView.setImageResource(resId);
-
         itemIconView.setBackgroundColor(Color.parseColor(resourceColor));
+
+        final String name = pcolor.getName();
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "Vous venez d'appuyer sur le Smiley: "+ name,Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return convertView;
     }
