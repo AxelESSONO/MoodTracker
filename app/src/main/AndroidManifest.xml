@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/icone_moodtracker"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".controller.MoodActivity"></activity>
+        <activity android:name=".controller.EditDataActivity"></activity>
+        <activity android:name=".controller.HistoryActivity" />
+        <activity android:name=".controller.MoodActivity" />
         <activity android:name=".controller.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
