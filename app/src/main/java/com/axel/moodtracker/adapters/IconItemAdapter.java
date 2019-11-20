@@ -2,18 +2,19 @@ package com.axel.moodtracker.adapters;
 
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.IconeItem;
-
 import java.util.List;
 
 public class IconItemAdapter extends BaseAdapter {
@@ -22,6 +23,7 @@ public class IconItemAdapter extends BaseAdapter {
     Context context;
     List<IconeItem> iconeItemList;
     LayoutInflater inflater;
+    LinearLayout mLinearLayout;
 
     //conctructor
     public IconItemAdapter(Context context, List<IconeItem> iconeItemList){
@@ -55,11 +57,19 @@ public class IconItemAdapter extends BaseAdapter {
         String mnemonic = currentItem.getMnemonic();
         final IconeItem pcolor = new IconeItem(currentItem.getName(),currentItem.getMnemonic(), currentItem.getColorSmiley());
 
+        //Change the width of imageView
+        WindowManager wm = (WindowManager) this.context.getSystemService(context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int screenHeight = size.y;
+
         //get item icon view
         String resourceName = "smiley_" + mnemonic;
         String resourceColor = pcolor.getColorSmiley();
-
         final ImageView itemIconView = convertView.findViewById(R.id.item_happy_smiley);
+        itemIconView.getLayoutParams().height = screenHeight;
+
         int resId = context.getResources().getIdentifier(resourceName, "drawable", context.getPackageName());
         itemIconView.setImageResource(resId);
         itemIconView.setBackgroundColor(Color.parseColor(resourceColor));
@@ -74,5 +84,4 @@ public class IconItemAdapter extends BaseAdapter {
 
         return convertView;
     }
-
 }
