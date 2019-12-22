@@ -1,25 +1,32 @@
 package com.axel.moodtracker.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import com.axel.moodtracker.R;
 
@@ -31,6 +38,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.axel.moodtracker.R.id.photo;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,7 +65,7 @@ public class MainFragment extends Fragment
         if (contacts != null)
         {
             final SimpleAdapter adapter = new SimpleAdapter(getActivity(), contacts, R.layout.contact, new String[] { "name", "photo" }, new int[] { R.id.name,
-                    R.id.photo });
+                    photo });
             adapter.setViewBinder(new SimpleAdapter.ViewBinder()
             {
 
@@ -84,26 +93,41 @@ public class MainFragment extends Fragment
                     if ((view instanceof ImageView) & (data instanceof Bitmap))
                     {
                         final ImageView image = (ImageView) view;
-                        final Bitmap photo = (Bitmap) data;
+                        Bitmap photo = (Bitmap) data;
                         image.setImageBitmap(photo);
+
                         return true;
                     }
                     return false;
                 }
             });
 
-
-
             list.setAdapter(adapter);
+
+            list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+            {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+                {
+
+                    return false;
+                }
+            });
+
         }
 
         return rootView;
         //return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
+    //==============================================================================================================================
     private List<Map<String, Object>> retrieveContacts(ContentResolver contentResolver)
     {
         final List<Map<String, Object>> contacts = new ArrayList<Map<String, Object>>();
+
+        //final Set<String> contacts = new HashSet<String>();
+
+
         final Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, new String[] { ContactsContract.Data.DISPLAY_NAME,
                 ContactsContract.Data._ID, ContactsContract.Contacts.HAS_PHONE_NUMBER }, null, null, null);
 
@@ -123,12 +147,10 @@ public class MainFragment extends Fragment
 
                 if (hasPhoneNumber > 0)
                 {
-                    final Bitmap photo = getPhoto(contentResolver, id);
-
+                    Bitmap photo = getPhoto(contentResolver, id);
                     final Map<String, Object> contact = new HashMap<String, Object>();
                     contact.put("name", name);
                     contact.put("photo", photo);
-
                     contacts.add(contact);
                 }
             }
@@ -139,7 +161,6 @@ public class MainFragment extends Fragment
         {
             cursor.close();
         }
-
         return contacts;
     }
 

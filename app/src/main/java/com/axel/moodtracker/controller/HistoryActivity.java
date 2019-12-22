@@ -14,7 +14,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.MoodDbAdapter;
@@ -39,7 +38,6 @@ public class HistoryActivity extends AppCompatActivity
         //dbHelper.deleteAllMood();
         //Generate ListView from SQLite Database
         displayListView();
-
     }
 
     @SuppressLint("ResourceType")
@@ -75,30 +73,10 @@ public class HistoryActivity extends AppCompatActivity
              @Override
              public void onItemClick(AdapterView listView, View view,int position, long id)
              {
-                /** // Get the cursor, positioned to the corresponding row in the result set
-                 Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-                 // Get the state's capital from this row in the database.
-                 String countryCode = cursor.getString(cursor.getColumnIndexOrThrow("color"));
-                 Toast.makeText(getApplicationContext(), countryCode, Toast.LENGTH_SHORT).show();**/
-
                  Intent intent = new Intent(getApplicationContext(), ContactsActivity.class);
                  startActivity(intent);
-
-
              }
          });
-
-       /** listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
-        {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                Intent intent = new Intent(HistoryActivity.this, ContactListActivity.class);
-                startActivity(intent);
-
-                return true;
-            }
-        });**/
     }
 
     //extend the SimpleCursorAdapter to create a custom class where we
@@ -124,8 +102,6 @@ public class HistoryActivity extends AppCompatActivity
             // Get the state's capital from this row in the database.
             String moodColor = cursor.getString(cursor.getColumnIndexOrThrow("color"));
             String moodComment = cursor.getString(cursor.getColumnIndexOrThrow("comment"));
-            //Toast.makeText(getApplicationContext(), countryCode, Toast.LENGTH_SHORT).show();
-
 
             //check for odd or even to set alternate colors to the row background
             view.setBackgroundColor(Color.parseColor(moodColor));
