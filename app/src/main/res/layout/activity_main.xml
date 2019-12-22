@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/happySmiley"
-        android:src="@drawable/smiley_happy"
+        android:src="@drawable/d_smiley_happy"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

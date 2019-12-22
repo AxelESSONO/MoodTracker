@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MoodTracker</string>
+    <string name="some_text">My mood history</string>
+    <string name="some_hint">Filter</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

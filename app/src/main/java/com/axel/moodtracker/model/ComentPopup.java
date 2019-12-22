@@ -1,7 +1,6 @@
 package com.axel.moodtracker.model;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.widget.Button;
 import android.widget.EditText;
