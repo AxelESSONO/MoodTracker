@@ -144,31 +144,8 @@ public class MoodDbAdapter
 
     public void insertSomeMood(String pComment,String pColor,String pDate,String pTime)
     {
-        /** CODE = KEY_CODE;
-         NAME = KEY_NAME;
-         CONTINENT = KEY_CONTINENT;
-         REGION = KEY_REGION;**/
-
         createMood(pComment,pColor,pDate,pTime);
-        Toast.makeText(mContext, "\n J'affiche le comment:" + pComment + "\n couleur: " + pColor+ "\n la date: "+ pDate+ "\n l'heure: " + pTime, Toast.LENGTH_LONG).show();
-
-
-        /**createCountry("TN","Tunisia","Africa","Maghreb");
-         createCountry("ALB","Albania","Europe","Southern Europe");
-         createCountry("DZA","Algeria","Africa","Maghreb");
-         createCountry("FR","France","Europe","UE");
-         createCountry("AND","Andorra","Europe","Southern Europe");
-         createCountry("AGO","Angola","Africa","Central Africa");
-         createCountry("AIA","Anguilla","North America","Caribbean");
-         createCountry("GA","Gabon","Africa","Central Africa");
-         createCountry("CAM","Cameroun","Africa","Central Africa");**/
-
+        //Toast.makeText(mContext, "\n J'affiche le comment:" + pComment + "\n couleur: " + pColor+ "\n la date: "+ pDate+ "\n l'heure: " + pTime, Toast.LENGTH_LONG).show();
     }
-
     //------------------------------------------------------------------------------
-
-
-
-
-
 }

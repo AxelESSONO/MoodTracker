@@ -84,6 +84,7 @@
         android:layout_height="50dp"
         android:src="@drawable/ic_comment_black_48px"
         android:layout_alignParentRight="true"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        />
 
 </RelativeLayout>

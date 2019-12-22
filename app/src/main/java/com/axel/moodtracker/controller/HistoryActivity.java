@@ -14,6 +14,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.MoodDbAdapter;
@@ -96,20 +98,31 @@ public class HistoryActivity extends AppCompatActivity
             //get reference to the row
             View view = super.getView(position, convertView, parent);
 
-            ImageView imageView = (ImageView) findViewById(R.id.display_image_comment);
+            ImageView imageView = (ImageView) view.findViewById(R.id.display_image_comment);
             ListView listView = (ListView) findViewById(R.id.listView1);
             Cursor cursor = (Cursor) listView.getItemAtPosition(position);
             // Get the state's capital from this row in the database.
             String moodColor = cursor.getString(cursor.getColumnIndexOrThrow("color"));
-            String moodComment = cursor.getString(cursor.getColumnIndexOrThrow("comment"));
+            final String moodComment = cursor.getString(cursor.getColumnIndexOrThrow("comment"));
 
             //check for odd or even to set alternate colors to the row background
             view.setBackgroundColor(Color.parseColor(moodColor));
-            if (moodComment.length() != 0)
+
+            if (moodComment != "")
             {
-                //imageView.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.VISIBLE);
+
+                imageView.setOnClickListener(new View.OnClickListener()
+                {
+                    @Override
+                    public void onClick(View v)
+                    {
+                        Toast.makeText(HistoryActivity.this, moodComment, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             } else {
-                view.setBackgroundColor(Color.rgb(255, 255, 255));
+                imageView.setVisibility(View.GONE);
             }
             return view;
         }
