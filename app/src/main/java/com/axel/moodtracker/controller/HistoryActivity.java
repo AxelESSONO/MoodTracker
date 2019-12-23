@@ -13,7 +13,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,7 +61,7 @@ public class HistoryActivity extends AppCompatActivity
         String[] columns = new String[]{MoodDbAdapter.COMMENT, MoodDbAdapter.COLOR, MoodDbAdapter.DATE, MoodDbAdapter.TIME};
 
         // the XML defined views which the data will be bound to
-        int[] to = new int[]{R.id.my_comment, R.id.my_color, R.id.my_time, R.id.my_date};
+        final int[] to = new int[]{R.id.my_comment, R.id.my_color, R.id.my_time, R.id.my_date};
 
         // create the adapter using the cursor pointing to the desired data
         //as well as the layout information
@@ -75,8 +77,17 @@ public class HistoryActivity extends AppCompatActivity
              @Override
              public void onItemClick(AdapterView listView, View view,int position, long id)
              {
-                 Intent intent = new Intent(getApplicationContext(), ContactsActivity.class);
-                 startActivity(intent);
+                 //int value = to[position];
+                // TextView txtC;
+                 //txtC = (TextView) findViewById(R.id.my_comment);
+                // String comment = txtC.getText().toString();
+
+                 //Toast.makeText(HistoryActivity.this, "J'affiche:  " + commentToShare, Toast.LENGTH_SHORT).show();
+
+                 //Intent intent = new Intent(getApplicationContext(), ContactsActivity.class);
+                 //intent.putExtra("edittext", comment);
+                 //intent.putExtra("nbLettre", nbLettre);
+                 //startActivity(intent);
              }
          });
     }
@@ -98,12 +109,27 @@ public class HistoryActivity extends AppCompatActivity
             //get reference to the row
             View view = super.getView(position, convertView, parent);
 
+            RelativeLayout relativeLayout = (RelativeLayout)view.findViewById(R.id.relative_layout_info);
+
             ImageView imageView = (ImageView) view.findViewById(R.id.display_image_comment);
             ListView listView = (ListView) findViewById(R.id.listView1);
             Cursor cursor = (Cursor) listView.getItemAtPosition(position);
             // Get the state's capital from this row in the database.
             String moodColor = cursor.getString(cursor.getColumnIndexOrThrow("color"));
             final String moodComment = cursor.getString(cursor.getColumnIndexOrThrow("comment"));
+
+            relativeLayout.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Intent intent = new Intent(getApplicationContext(), ContactsActivity.class);
+                    intent.putExtra("myComment", moodComment );
+                    //intent.putExtra("nbLettre", nbLettre);
+                    startActivity(intent);
+                    //Toast.makeText(HistoryActivity.this, moodComment, Toast.LENGTH_SHORT).show();
+                }
+            });
 
             //check for odd or even to set alternate colors to the row background
             view.setBackgroundColor(Color.parseColor(moodColor));

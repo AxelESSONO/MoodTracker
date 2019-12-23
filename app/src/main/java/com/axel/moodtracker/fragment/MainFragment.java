@@ -68,7 +68,6 @@ public class MainFragment extends Fragment
                     photo });
             adapter.setViewBinder(new SimpleAdapter.ViewBinder()
             {
-
                 @Override
                 public boolean setViewValue(View view, Object data, String textRepresentation)
                 {
@@ -82,7 +81,6 @@ public class MainFragment extends Fragment
                     return false;
                 }
             });
-
 
             //un ViewBinder permettant à notre SimpleAdapter d’afficher correctement les photos
             adapter.setViewBinder(new SimpleAdapter.ViewBinder()
@@ -104,15 +102,16 @@ public class MainFragment extends Fragment
 
             list.setAdapter(adapter);
 
-            list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+            //=========================================================================================================
+            list.setOnItemClickListener(new AdapterView.OnItemClickListener()
             {
                 @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                 {
 
-                    return false;
                 }
             });
+            //========================================================================================================
 
         }
 
@@ -164,6 +163,10 @@ public class MainFragment extends Fragment
         return contacts;
     }
 
+    public interface OnItemSelectedListener {
+        public void onMainFragmentItemSelected(String link);
+    }
+
     private Bitmap getPhoto(ContentResolver contentResolver, long contactId)
     {
         Bitmap photo = null;
@@ -191,8 +194,6 @@ public class MainFragment extends Fragment
         {
             cursor.close();
         }
-
         return photo;
     }
-
 }
