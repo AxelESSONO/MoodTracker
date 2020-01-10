@@ -26,11 +26,22 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
     private ImageView mImage;
     private MoodActivity moodActivity;
     private GestureDetectorCompat mDetector;
-    private int mImageRessource[] = {R.drawable.a_smiley_disappointed, R.drawable.b_smiley_sad,R.drawable.c_smiley_normal, R.drawable.d_smiley_happy, R.drawable.e_smiley_super_happy};
+    private int mImageRessource[] = {R.drawable.a_smiley_disappointed,
+            R.drawable.b_smiley_sad,
+            R.drawable.c_smiley_normal,
+            R.drawable.d_smiley_happy,
+            R.drawable.e_smiley_super_happy};
     private int i = 2;
     private String resourceColor [] = {"#AB1A49","#808A89", "#3135D0", "#55B617", "#D0E807" };
     private RelativeLayout relativeLayoutMood;
+
+
+    private int retreiveImageRessource;
+    private String retreive;
+
     MoodDbAdapter mDatabaseHelper;
+    public static final int BUNDLE_EXTRA_IMAGE = 10;
+    public static final String BUNDLE_EXTRA_COLOR = "BUNDLE_COLOR";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,8 +54,6 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         final ImageView myPopup = findViewById(R.id.add_comment_button);
         //get ImageView
         mImage = (ImageView) findViewById(R.id.list_picture);
-
-
 
         // Instantiate the gesture detector with the
         // application context and an implementation of
@@ -106,12 +115,29 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                             addData(newComment,newColor, saveCurrentDate, saveCurrentTime);
                             mComent.setText("");
                             Toast.makeText(MoodActivity.this,"Votre commentaire a été enrégistré avec succès",Toast.LENGTH_SHORT).show();
+
+
+
+                            Intent moodIntent = new Intent();
+                            moodIntent.putExtra(String.valueOf(BUNDLE_EXTRA_IMAGE), mImageRessource[i] );
+                            moodIntent.putExtra(BUNDLE_EXTRA_COLOR, resourceColor[i]);
+                            setResult(RESULT_OK, moodIntent);
+
+
+
                             dialog.dismiss();
+
+
+
                         }
                         else
-                            {
-                                Toast.makeText(MoodActivity.this, "Veuillez saisir un commentaire s'il vous plaît !", Toast.LENGTH_SHORT).show();
-                            }
+                        {
+                            //Toast.makeText(MoodActivity.this, "Veuillez saisir un commentaire s'il vous plaît !", Toast.LENGTH_SHORT).show();
+                            addData(newComment,newColor, saveCurrentDate, saveCurrentTime);
+                            mComent.setText("");
+                            Toast.makeText(MoodActivity.this,"Humeur enregistrée sans commentaire",Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
                     }
                 });
                 //To dismiss writing comment
@@ -139,10 +165,9 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
             }
         });
     }
-////--------------------------------
+    ////--------------------------------
     public void addData(String comment,String color,String pDate,String pTime)
     {
-
         mDatabaseHelper.insertSomeMood(comment,color, pDate, pTime);
     }
 
@@ -179,9 +204,9 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         {
             if(i == 4)
             {
-            mImage.setImageResource(mImageRessource[4]);
+                mImage.setImageResource(mImageRessource[4]);
                 relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[4]));
-        }
+            }
             else if(i<4)
             {
                 mImage.setImageResource(mImageRessource[i+1]);
