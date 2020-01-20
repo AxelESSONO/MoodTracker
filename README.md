@@ -50,4 +50,10 @@ projects:
     image: content/images/students/AxelCedric92/projet_2.png.jpg
     link: https://www.github.com
     finished: false
+    
+    # Titre de niveau 1
+
+## Titre de niveau 2
+
+### Titre de niveau 3
 ---
