@@ -21,7 +21,8 @@ import com.axel.moodtracker.model.MoodDbAdapter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class MoodActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
+public class MoodActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
+{
 
     private ImageView mImage;
     private MoodActivity moodActivity;
@@ -100,40 +101,33 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                         String newColor = mColor;
 
                         // get date and time
-                        final String saveCurrentDate, saveCurrentTime;
+                        final String saveCurrentDate;
                         Calendar calForDate = Calendar.getInstance();
-
-                        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy ");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
                         saveCurrentDate = currentDate.format(calForDate.getTime());
 
-                        SimpleDateFormat currentTime = new SimpleDateFormat(" HH : mm : ss");
-                        saveCurrentTime = currentTime.format(calForDate.getTime());
+                        //SimpleDateFormat currentTime = new SimpleDateFormat(" HH : mm : ss");
+                        //saveCurrentTime = currentTime.format(calForDate.getTime());
 
                         // Check if field is not empty
                         if(!mComent.getText().toString().isEmpty())
                         {
-                            addData(newComment,newColor, saveCurrentDate, saveCurrentTime);
+                            addData(newComment,newColor, saveCurrentDate);
                             mComent.setText("");
                             Toast.makeText(MoodActivity.this,"Votre commentaire a été enrégistré avec succès",Toast.LENGTH_SHORT).show();
-
-
 
                             Intent moodIntent = new Intent();
                             moodIntent.putExtra(String.valueOf(BUNDLE_EXTRA_IMAGE), mImageRessource[i] );
                             moodIntent.putExtra(BUNDLE_EXTRA_COLOR, resourceColor[i]);
                             setResult(RESULT_OK, moodIntent);
 
-
-
                             dialog.dismiss();
-
-
 
                         }
                         else
                         {
                             //Toast.makeText(MoodActivity.this, "Veuillez saisir un commentaire s'il vous plaît !", Toast.LENGTH_SHORT).show();
-                            addData(newComment,newColor, saveCurrentDate, saveCurrentTime);
+                            addData(newComment,newColor, saveCurrentDate);
                             mComent.setText("");
                             Toast.makeText(MoodActivity.this,"Humeur enregistrée sans commentaire",Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
@@ -165,10 +159,18 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
             }
         });
     }
-    ////--------------------------------
-    public void addData(String comment,String color,String pDate,String pTime)
+
+    @Override
+    protected void onPause()
     {
-        mDatabaseHelper.insertSomeMood(comment,color, pDate, pTime);
+        super.onPause();
+    }
+
+
+    ////--------------------------------
+    public void addData(String comment,String color,String pDate)
+    {
+        mDatabaseHelper.insertSomeMood(comment,color, pDate);
     }
 
     /**

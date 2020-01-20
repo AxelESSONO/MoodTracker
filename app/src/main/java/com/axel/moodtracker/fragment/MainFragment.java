@@ -107,12 +107,9 @@ public class MainFragment extends Fragment
             {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                {
-
-                }
+                { }
             });
             //========================================================================================================
-
         }
 
         return rootView;
@@ -163,7 +160,8 @@ public class MainFragment extends Fragment
         return contacts;
     }
 
-    public interface OnItemSelectedListener {
+    public interface OnItemSelectedListener
+    {
         public void onMainFragmentItemSelected(String link);
     }
 

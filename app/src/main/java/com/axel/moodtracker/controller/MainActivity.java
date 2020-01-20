@@ -18,13 +18,12 @@ import com.axel.moodtracker.model.Mood;
 public class MainActivity extends AppCompatActivity
 {
 
-    //private static final String PREF_KEY_IMAGE = "PREF_KEY_IMAGE";
-    //private static final String PREF_KEY_COLOR = "PREF_KEY_COLOR";
+    private static final String PREF_KEY_IMAGE = "PREF_KEY_IMAGE";
+    private static final String PREF_KEY_COLOR = "PREF_KEY_COLOR";
 
-
-    //private Mood mood;
+    private Mood mood;
     private ImageView imageView;
-    //private LinearLayout linearLayout;
+    private LinearLayout linearLayout;
     private TextView txtAppName;
     private TextView txtVersion;
     private ProgressBar progressBar;
@@ -68,8 +67,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-
-  /*      imageView.setOnClickListener(new View.OnClickListener()
+        imageView.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -77,10 +75,10 @@ public class MainActivity extends AppCompatActivity
                 Intent moodActivity = new Intent(MainActivity.this, MoodActivity.class);
                 startActivity(moodActivity);
             }
-        });*/
+        });
     }
-
-/*    @Override
+/*
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         if (MOOD_ACTIVITY_REQUEST_CODE == requestCode && RESULT_OK == resultCode)
@@ -97,6 +95,4 @@ public class MainActivity extends AppCompatActivity
             //mPreferences.edit().putInt(PREF_KEY_SCORE, score).apply();
         }
     }*/
-
-
 }

@@ -6,7 +6,7 @@ public class Mood
     String mComment = null;
     String mColor = null;
     String mDate = null;
-    String mTime = null;
+    //String mTime = null;
 
     public String getComment() {
         return mComment;
@@ -32,11 +32,11 @@ public class Mood
         this.mDate = mDate;
     }
 
-    public String getTime() {
+/*    public String getTime() {
         return mTime;
     }
 
     public void setTime(String mTime) {
         this.mTime = mTime;
-    }
+    }*/
 }

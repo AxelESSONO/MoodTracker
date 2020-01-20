@@ -16,7 +16,7 @@ public class MoodDbAdapter
     public static final String COMMENT = "comment";
     public static final String COLOR = "color";
     public static final String DATE = "date";
-    public static final String TIME = "time";
+    //public static final String TIME = "time";
 
     private static final String TAG = "MoodAdapter";
     private DatabaseHelper mDbHelper;
@@ -34,8 +34,8 @@ public class MoodDbAdapter
                     COMMENT + "," +
                     COLOR + "," +
                     DATE + "," +
-                    TIME + "," +
                     " UNIQUE (" + COMMENT +"));";
+    //TIME + "," +
 
     // DataBaseHelper -------------------------------------------------------------------
     private static class DatabaseHelper extends SQLiteOpenHelper
@@ -78,7 +78,7 @@ public class MoodDbAdapter
         }
     }
 
-   public long createMood(String comment, String color, String date, String time)
+   public long createMood(String comment, String color, String date)
     {
         //open();
 
@@ -89,7 +89,7 @@ public class MoodDbAdapter
         initialValues.put(COMMENT, comment);
         initialValues.put(COLOR, color);
         initialValues.put(DATE, date);
-        initialValues.put(TIME, time);
+        //initialValues.put(TIME, time);
         return mDb.insert(SQLITE_TABLE, null, initialValues);
     }
 
@@ -107,11 +107,13 @@ public class MoodDbAdapter
         Cursor mCursor = null;
         if (inputText == null  ||  inputText.length () == 0)
         {
-            mCursor = mDb.query(SQLITE_TABLE, new String[] {KEY_ID, COMMENT, COLOR, DATE, TIME}, null, null, null, null, null);
+            mCursor = mDb.query(SQLITE_TABLE, new String[] {KEY_ID, COMMENT, COLOR, DATE}, null, null, null, null, null);
+            //mCursor = mDb.query(SQLITE_TABLE, new String[] {KEY_ID, COMMENT, COLOR, DATE, TIME}, null, null, null, null, null);
         }
         else
             {
-            mCursor = mDb.query(true, SQLITE_TABLE, new String[] {KEY_ID,COMMENT, COLOR, DATE, TIME},
+                //mCursor = mDb.query(true, SQLITE_TABLE, new String[] {KEY_ID,COMMENT, COLOR, DATE, TIME},
+            mCursor = mDb.query(true, SQLITE_TABLE, new String[] {KEY_ID,COMMENT, COLOR, DATE},
                     COLOR + " like '%" + inputText + "%'", null,
                     null, null, null, null);
         }
@@ -131,9 +133,9 @@ public class MoodDbAdapter
                                 KEY_ID,
                                 COMMENT,
                                 COLOR,
-                                DATE,
-                                TIME},
+                                DATE},
                 null, null, null, null, null);
+       // TIME},
 
         if (mCursor != null)
         {
@@ -142,10 +144,15 @@ public class MoodDbAdapter
         return mCursor;
     }
 
-    public void insertSomeMood(String pComment,String pColor,String pDate,String pTime)
+    public void insertSomeMood(String pComment,String pColor,String pDate)
     {
-        createMood(pComment,pColor,pDate,pTime);
+        createMood(pComment,pColor,pDate);
         //Toast.makeText(mContext, "\n J'affiche le comment:" + pComment + "\n couleur: " + pColor+ "\n la date: "+ pDate+ "\n l'heure: " + pTime, Toast.LENGTH_LONG).show();
     }
     //------------------------------------------------------------------------------
+
+
+    public static String getDATE() {
+        return DATE;
+    }
 }
