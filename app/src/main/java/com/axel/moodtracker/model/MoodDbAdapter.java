@@ -35,7 +35,6 @@ public class MoodDbAdapter
                     COLOR + "," +
                     DATE + "," +
                     " UNIQUE (" + COMMENT +"));";
-    //TIME + "," +
 
     // DataBaseHelper -------------------------------------------------------------------
     private static class DatabaseHelper extends SQLiteOpenHelper
@@ -152,7 +151,7 @@ public class MoodDbAdapter
     //------------------------------------------------------------------------------
 
 
-    public static String getDATE() {
+    public static String getDATE(int i) {
         return DATE;
     }
 }

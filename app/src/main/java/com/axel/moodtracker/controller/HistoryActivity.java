@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -42,15 +43,9 @@ import static com.axel.moodtracker.R.layout.layout_mood_info;
 public class HistoryActivity extends AppCompatActivity
 {
     private MoodDbAdapter dbHelper;
-
-
     private Date date1 = null;
     private Date date2 = null;
     private static long diff = 0;
-
-
-    //private MyCursorAdapter dataAdapter;
-    //private SimpleCursorAdapter dataAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,6 +54,7 @@ public class HistoryActivity extends AppCompatActivity
         setContentView(R.layout.activity_history);
         dbHelper = new MoodDbAdapter(this);
         dbHelper.open();
+
         //Clean all data
         //dbHelper.deleteAllMood();
         //Generate ListView from SQLite Database
@@ -74,44 +70,15 @@ public class HistoryActivity extends AppCompatActivity
         return true;
     }
 
-    private void displayListView() {
-
-        try {
-            Cursor cursor = dbHelper.fetchAllMood();
-            // The desired columns to be bound
-
-            String[] columns = new String[]{MoodDbAdapter.DATE};
-
-            DateFormat df = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-            Date date1 = new java.util.Date();
-            Date date2 = df.parse("12 01 2020 23:18:00");
-            diff = date1.getTime() - date2.getTime();
-            diff = diff/ 1000 / 60 / 60 / 24;
-
-            String date = String.valueOf(diff);
-
-            Log.e("TEST" , date1.getTime() + " - " + date2.getTime() + " - " + diff);
-
-            // the XML defined views which the data will be bound to
-            //final int[] to = new int[]{R.id.my_comment, R.id.my_color, R.id.my_date};
-            final int[] to = new int[]{R.id.my_date};
-
-            // create the adapter using the cursor pointing to the desired data
-            //as well as the layout information
-            MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, layout_mood_info, cursor, columns, to, 0);
-
-            ListView listView = (ListView) findViewById(R.id.listView1);
-            // Assign adapter to ListView
-            listView.setAdapter(myCursorAdapter );
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        finally
-        {
-            Toast.makeText(this, "Il y'a: "+ diff + " jours", Toast.LENGTH_SHORT).show();
-        }
+    private void displayListView()
+    {
+        Cursor cursor = dbHelper.fetchAllMood();
+        String[] columns = new String[]{MoodDbAdapter.DATE};
+        final int[] to = new int[]{R.id.my_date};
+        MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, layout_mood_info, cursor, columns, to, 0);
+        ListView listView = (ListView) findViewById(R.id.listView1);
+        // Assign adapter to ListView
+        listView.setAdapter(myCursorAdapter );
     }
 
     //extend the SimpleCursorAdapter to create a custom class where we
@@ -129,15 +96,32 @@ public class HistoryActivity extends AppCompatActivity
             // ============================= get width of the screen ==========================================
             //get reference to the row
             View view = super.getView(position, convertView, parent);
-
             RelativeLayout relativeLayout = (RelativeLayout)view.findViewById(R.id.relative_layout_info);
-
+            TextView textView1 = (TextView) view.findViewById(R.id.my_date);
             ImageView imageView = (ImageView) view.findViewById(R.id.display_image_comment);
             ListView listView = (ListView) findViewById(R.id.listView1);
             Cursor cursor = (Cursor) listView.getItemAtPosition(position);
             // Get the state's capital from this row in the database.
             final String moodColor = cursor.getString(cursor.getColumnIndexOrThrow("color"));
             final String moodComment = cursor.getString(cursor.getColumnIndexOrThrow("comment"));
+            String dateMood = null;
+            DateFormat df = new SimpleDateFormat("dd MMM yyyy  HH : mm : ss");
+            Date date1 = new java.util.Date();
+            Date date2 = null;
+            try {
+                dateMood = cursor.getString(cursor.getColumnIndex(MoodDbAdapter.DATE));
+                date2 = df.parse(dateMood);
+                diff = date1.getTime() - date2.getTime();
+                diff = diff/ 1000 / 60 / 60 / 24;
+                //textView1.setText("Il y'a: " + diff + " jours");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            finally
+            {
+                //Toast.makeText(getApplicationContext(), "Il y'a ooo: " + diff + " jours", Toast.LENGTH_SHORT).show();
+                textView1.setText("Il y'a: " + diff + " jours");
+            }
 
             view.setLayoutParams(new LinearLayout.LayoutParams(resizeWidthAccordingToMood(moodColor), measureHeight()/7));
             relativeLayout.setOnClickListener(new View.OnClickListener()
@@ -172,6 +156,24 @@ public class HistoryActivity extends AppCompatActivity
             }
             return view;
         }
+
+        @Override
+        public int getCount() {
+            int count = 0;
+            if(getCursor().getCount()< 0)
+            {
+                count = 0;
+            }
+            if(getCursor().getCount() >= 0 && getCursor().getCount() <= 7)
+            {
+                count = getCursor().getCount();
+            }
+            if(getCursor().getCount() > 7)
+            {
+                count = 7;
+            }
+            return count;
+        }
     }
 
     private int measureWidth() {
@@ -203,7 +205,6 @@ public class HistoryActivity extends AppCompatActivity
         }
         return screenHeight;
     }
-
     private int resizeWidthAccordingToMood(String paramColor) {
         int newWidth = 0;
         if(paramColor.equals("#AB1A49")) {

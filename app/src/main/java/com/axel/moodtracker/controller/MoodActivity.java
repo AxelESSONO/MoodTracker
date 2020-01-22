@@ -3,7 +3,6 @@ package com.axel.moodtracker.controller;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import java.util.Calendar;
 
 public class MoodActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener
 {
-
     private ImageView mImage;
     private MoodActivity moodActivity;
     private GestureDetectorCompat mDetector;
@@ -103,7 +101,7 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                         // get date and time
                         final String saveCurrentDate;
                         Calendar calForDate = Calendar.getInstance();
-                        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy  HH : mm : ss");
                         saveCurrentDate = currentDate.format(calForDate.getTime());
 
                         //SimpleDateFormat currentTime = new SimpleDateFormat(" HH : mm : ss");
@@ -114,22 +112,21 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                         {
                             addData(newComment,newColor, saveCurrentDate);
                             mComent.setText("");
-                            Toast.makeText(MoodActivity.this,"Votre commentaire a été enrégistré avec succès",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MoodActivity.this,"Your comment has been saved successfully",Toast.LENGTH_SHORT).show();
 
                             Intent moodIntent = new Intent();
                             moodIntent.putExtra(String.valueOf(BUNDLE_EXTRA_IMAGE), mImageRessource[i] );
                             moodIntent.putExtra(BUNDLE_EXTRA_COLOR, resourceColor[i]);
                             setResult(RESULT_OK, moodIntent);
-
                             dialog.dismiss();
 
                         }
                         else
                         {
-                            //Toast.makeText(MoodActivity.this, "Veuillez saisir un commentaire s'il vous plaît !", Toast.LENGTH_SHORT).show();
                             addData(newComment,newColor, saveCurrentDate);
+                            Toast.makeText(MoodActivity.this, newComment, Toast.LENGTH_SHORT).show();
                             mComent.setText("");
-                            Toast.makeText(MoodActivity.this,"Humeur enregistrée sans commentaire",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MoodActivity.this,"Mood has been saved without comment",Toast.LENGTH_SHORT).show();
                             dialog.dismiss();
                         }
                     }
@@ -154,6 +151,8 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
             @Override
             public void onClick(View v)
             {
+
+
                 Intent historyActivity = new Intent(MoodActivity.this, HistoryActivity.class);
                 startActivity(historyActivity);
             }

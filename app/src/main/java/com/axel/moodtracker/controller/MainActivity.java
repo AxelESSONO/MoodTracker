@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity
                 //startActivityForResult(mainIntent,MOOD_ACTIVITY_REQUEST_CODE);
                 MainActivity.this.finish();
             }
-        }, 5000);
+        }, 1000);
 
 
 

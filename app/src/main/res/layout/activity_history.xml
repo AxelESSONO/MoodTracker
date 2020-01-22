@@ -14,8 +14,6 @@
         android:text="@string/some_text"
         android:textAlignment="center"
         android:textSize="20sp"/>
-
-
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
