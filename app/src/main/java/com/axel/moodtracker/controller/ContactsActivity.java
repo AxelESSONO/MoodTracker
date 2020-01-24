@@ -12,20 +12,21 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.telephony.gsm.SmsManager;
 import com.axel.moodtracker.R;
-import com.axel.moodtracker.fragment.MainFragment;
 
 public class ContactsActivity extends AppCompatActivity
 {
     private static final int RESULT_PICK_CONTACT =1;
     private TextView phone, txtMessage;
     private Button select, sendMessageBtn;
+    private ImageView imageView;
     private String phoneNo = null;
-    private String retreiveComment = null;
+    private String retreiveComment = null, retreiveColor = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -35,11 +36,14 @@ public class ContactsActivity extends AppCompatActivity
 
         phone = (TextView) findViewById (R.id.phone);
         txtMessage = (TextView) findViewById(R.id.message_contact);
+        imageView = (ImageView) findViewById(R.id.image_smiley_contact);
         select = (Button) findViewById (R.id.select);
         sendMessageBtn = (Button) findViewById(R.id.send_message_btn);
 
         // retreive the comment
         retreiveComment = getIntent().getStringExtra("myComment");
+        retreiveColor = getIntent().getStringExtra("colorMood");
+        imageView.setImageResource(loadSmileyImage(retreiveColor));
         txtMessage.setText(retreiveComment);
         //Toast.makeText(this, retreiveComment, Toast.LENGTH_SHORT).show();
 
@@ -51,6 +55,7 @@ public class ContactsActivity extends AppCompatActivity
             {
                 Intent in = new Intent (Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
                 startActivityForResult (in, RESULT_PICK_CONTACT);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
@@ -84,6 +89,12 @@ public class ContactsActivity extends AppCompatActivity
     }
 
     @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode,  Intent data)
     {
         if(resultCode==RESULT_OK)
@@ -97,7 +108,7 @@ public class ContactsActivity extends AppCompatActivity
         }
         else
         {
-            Toast.makeText (this, "Failed To pick contact", Toast.LENGTH_SHORT).show ();
+            //Toast.makeText (this, "Failed To pick contact", Toast.LENGTH_SHORT).show ();
         }
     }
 
@@ -182,5 +193,26 @@ public class ContactsActivity extends AppCompatActivity
      });
      **/
     // }
+
+    private int loadSmileyImage(String color) {
+
+        int idImage = 0;
+        if(color.equals("#AB1A49")) {
+            idImage = R.drawable.a_smiley_disappointed;
+        }
+        if(color.equals("#808A89")) {
+            idImage = R.drawable.b_smiley_sad;
+        }
+        if(color.equals("#3135D0")) {
+            idImage = R.drawable.c_smiley_normal;
+        }
+        if(color.equals("#55B617")) {
+            idImage = R.drawable.d_smiley_happy;
+        }
+        if(color.equals("#D0E807")) {
+            idImage =  R.drawable.e_smiley_super_happy;
+        }
+        return idImage;
+    }
 
 }

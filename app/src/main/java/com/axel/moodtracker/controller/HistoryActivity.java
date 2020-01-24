@@ -61,6 +61,13 @@ public class HistoryActivity extends AppCompatActivity
         displayListView();
     }
 
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
     @SuppressLint("ResourceType")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,8 +118,8 @@ public class HistoryActivity extends AppCompatActivity
             try {
                 dateMood = cursor.getString(cursor.getColumnIndex(MoodDbAdapter.DATE));
                 date2 = df.parse(dateMood);
-                diff = date1.getTime() - date2.getTime();
-                diff = diff/ 1000 / 60 / 60 / 24;
+                diff = (date1.getTime() - date2.getTime())/86400000;
+                //diff = diff/ 1000 / 60 / 60 / 24;
                 //textView1.setText("Il y'a: " + diff + " jours");
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -130,8 +137,10 @@ public class HistoryActivity extends AppCompatActivity
                 public void onClick(View v)
                 {
                     Intent intent = new Intent(HistoryActivity.this, ContactsActivity.class);
-                    intent.putExtra("myComment", moodComment );
+                    intent.putExtra("myComment", moodComment);
+                    intent.putExtra("colorMood",moodColor);
                     startActivity(intent);
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 }
             });
 

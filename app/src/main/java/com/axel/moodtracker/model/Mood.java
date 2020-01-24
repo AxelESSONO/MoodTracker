@@ -5,6 +5,13 @@ public class Mood
     String mComment = null;
     String mColor = null;
     String mDate = null;
+
+    public Mood(String mComment, String mColor, String mDate) {
+        this.mComment = mComment;
+        this.mColor = mColor;
+        this.mDate = mDate;
+    }
+
     public String getComment() {
         return mComment;
     }

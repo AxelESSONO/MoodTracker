@@ -100,6 +100,17 @@ public class MoodDbAdapter
         return doneDelete > 0;
     }
 
+    public void deleteOneLine(String id, String pDate)
+    {
+        //mDb.delete(SQLITE_TABLE, KEY_ID + " = ?", new String[] {String.valueOf(id)});
+
+        String query = "DELETE FROM " + SQLITE_TABLE + " WHERE "
+                + KEY_ID + " = '" + id + "'" +
+                " AND " + DATE + " = '" + pDate + "'";
+
+        mDb.execSQL(query);
+    }
+
     public Cursor fetchMoodByColor(String inputText) throws SQLException
     {
         Log.w(TAG, inputText);
@@ -124,6 +135,27 @@ public class MoodDbAdapter
 
     }
 
+    public Cursor fetchMoodByDate(String pDate) throws SQLException
+    {
+        Log.w(TAG, pDate);
+        Cursor mCursor = null;
+        if (pDate == null  ||  pDate.length () == 0)
+        {
+            mCursor = mDb.query(SQLITE_TABLE, new String[] {KEY_ID, COMMENT, COLOR, DATE}, null, null, null, null, null);
+        }
+        else
+        {
+            mCursor = mDb.query(true, SQLITE_TABLE, new String[] {KEY_ID,COMMENT, COLOR, DATE},
+                    DATE + " like '%" + pDate + "%'", null,
+                    null, null, null, null);
+        }
+        if (mCursor != null)
+        {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+    }
+
     public Cursor fetchAllMood()
     {
 
@@ -143,15 +175,15 @@ public class MoodDbAdapter
         return mCursor;
     }
 
+
+
     public void insertSomeMood(String pComment,String pColor,String pDate)
     {
         createMood(pComment,pColor,pDate);
         //Toast.makeText(mContext, "\n J'affiche le comment:" + pComment + "\n couleur: " + pColor+ "\n la date: "+ pDate+ "\n l'heure: " + pTime, Toast.LENGTH_LONG).show();
     }
     //------------------------------------------------------------------------------
-
-
-    public static String getDATE(int i) {
+ /*   public static String getDATE(int i) {
         return DATE;
-    }
+    }*/
 }
