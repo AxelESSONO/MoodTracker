@@ -195,7 +195,6 @@ public class ContactsActivity extends AppCompatActivity
     // }
 
     private int loadSmileyImage(String color) {
-
         int idImage = 0;
         if(color.equals("#AB1A49")) {
             idImage = R.drawable.a_smiley_disappointed;
@@ -214,5 +213,4 @@ public class ContactsActivity extends AppCompatActivity
         }
         return idImage;
     }
-
 }

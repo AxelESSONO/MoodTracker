@@ -1,9 +1,11 @@
 package com.axel.moodtracker.controller;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,6 +25,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MoodActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+    public static final String IMAGE_RESSOURCE = "imageColorToDisplay" ;
+    public static final String IMAGE_COLOR = "imageColor";
+    public static final String STOCKAGE_INFOS = "data";
     private ImageView mImage;
     private MoodActivity moodActivity;
     private GestureDetectorCompat mDetector;
@@ -43,10 +48,20 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
     public static final String BUNDLE_EXTRA_COLOR = "BUNDLE_COLOR";
 
 
+    //SharedPreferences preferences;
+
+
+
+
+
+
+
+
     //private MoodDbAdapter dbHelper;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood);
 
@@ -74,6 +89,13 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         //moodDbAdapter = new MoodDbAdapter(this);
 
         //-----------------------------------------------------------------------------------------------------------------
+
+
+
+        final SharedPreferences preferences = getSharedPreferences(STOCKAGE_INFOS, MODE_PRIVATE);
+        final SharedPreferences.Editor editor = preferences.edit();
+
+
         myPopup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,19 +137,40 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                             
                             //currentDateExist(newComment,newColor,saveCurrentDate);
 
-                            if(currentDateExistInDatabase(saveCurrentDate))
-                            {
-                                deleteMood(newComment,newColor,saveCurrentDate);
+                            //if(currentDateExistInDatabase(saveCurrentDate))
+                           // {
+                                //deleteMood(newComment,newColor,saveCurrentDate);
                                 addData(newComment,newColor, saveCurrentDate);
                                 mComent.setText("");
                                 Toast.makeText(MoodActivity.this,"Your comment has been saved successfully",Toast.LENGTH_SHORT).show();
 
+
+                            //preferences = getSharedPreferences(STOCKAGE_INFOS, 0);
+                                    //getPreferences(MODE_PRIVATE);
+
+                            //preferences.edit().putInt(IMAGE_RESSOURCE, mImageRessource[i]).apply();
+                            //preferences.edit().putString(IMAGE_COLOR, mColor).apply();
+
+
+
+                            editor.putInt(IMAGE_RESSOURCE, mImageRessource[i]);
+                            editor.putString(IMAGE_COLOR, resourceColor[i]);
+                            editor.commit();
+
+
+
+
                                 Intent moodIntent = new Intent();
                                 moodIntent.putExtra(String.valueOf(BUNDLE_EXTRA_IMAGE), mImageRessource[i] );
                                 moodIntent.putExtra(BUNDLE_EXTRA_COLOR, resourceColor[i]);
+
+
+
+
+
                                 setResult(RESULT_OK, moodIntent);
                                 dialog.dismiss();
-                            }
+                           // }
                             /*else
                             {
                                 Toast.makeText(MoodActivity.this, "youpiiiiiiiiiiiiiiiiiiiiiii", Toast.LENGTH_SHORT).show();
@@ -137,11 +180,16 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                         }
                         else {
                             addData(newComment,newColor, saveCurrentDate);
-                            Toast.makeText(MoodActivity.this, newComment, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(MoodActivity.this, newComment, Toast.LENGTH_SHORT).show();
                             mComent.setText("");
-                            Toast.makeText(MoodActivity.this,"Mood has been saved without comment",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MoodActivity.this,"Mood saved without comment",Toast.LENGTH_SHORT).show();
+                            editor.putInt(IMAGE_RESSOURCE, mImageRessource[i]);
+                            editor.putString(IMAGE_COLOR, resourceColor[i]);
+                            editor.commit();
+
                             dialog.dismiss();
                         }
+
                     }
                 });
                 //To dismiss writing comment
@@ -169,7 +217,42 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         });
     }
 
-    private void deleteMood(String newComment, String newColor, String saveCurrentDate)
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        mImage.setImageResource( mImageRessource[3]);
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mImage.setImageResource( mImageRessource[3]);
+    }
+
+    private int loadSmileyImage(String color) {
+        int idImage = 0;
+        if(color.equals("#AB1A49")) {
+            idImage = R.drawable.a_smiley_disappointed;
+        }
+        if(color.equals("#808A89")) {
+            idImage = R.drawable.b_smiley_sad;
+        }
+        if(color.equals("#3135D0")) {
+            idImage = R.drawable.c_smiley_normal;
+        }
+        if(color.equals("#55B617")) {
+            idImage = R.drawable.d_smiley_happy;
+        }
+        if(color.equals("#D0E807")) {
+            idImage =  R.drawable.e_smiley_super_happy;
+        }
+        return idImage;
+    }
+
+/*    private void deleteMood(String newComment, String newColor, String saveCurrentDate)
     {
         Cursor cursor = mDatabaseHelper.fetchAllMood();
                 //fetchMoodByDate(saveCurrentDate);
@@ -181,7 +264,7 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
 
         Mood mood = new  Mood(m_comment, m_color, saveCurrentDate);
         mDatabaseHelper.deleteOneLine(m_id, m_date);
-    }
+    }*/
 
     private Boolean currentDateExistInDatabase(String date) {
 
@@ -209,12 +292,6 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
     }
 
 
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-    }
-
 
     ////--------------------------------
     public void addData(String comment,String color,String pDate) {
@@ -225,11 +302,17 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
      * customizable message
      * @param message
      */
-    public void toastMessage(String message){Toast.makeText(this,message,Toast.LENGTH_SHORT).show();}
+    public void toastMessage(String message){
+        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        if (this.mDetector.onTouchEvent(event)) {return true;}
-        return super.onTouchEvent(event);}
+        if (this.mDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {return false;}

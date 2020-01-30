@@ -10,25 +10,24 @@
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Votre commentaire"
-        android:layout_margin="5dp"
+        android:text="Your comment"
+
         android:textSize="20dp"
         android:textColor="@android:color/white"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:gravity="center"
+        android:textAllCaps="true"
         android:textStyle="bold"/>
 
     <EditText
         android:id="@+id/subTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorBackgroundBleu"
+        android:textColor="@android:color/black"
         android:layout_marginTop="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
         android:layout_marginBottom="4dp"
         android:layout_margin="5dp"
-        android:hint="Veuillez saisir votre commentaire"
+        android:hint="Please write a comment here ..."
         android:inputType="text"
         android:gravity="center"/>
 
@@ -43,26 +42,26 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="Annuler"
-            android:textAllCaps="false"
+            android:text="Cancel"
+            android:textAllCaps="true"
             android:textStyle="bold"
-            android:layout_margin="5dp"
             android:textSize="18sp"
             android:textColor="@android:color/white"
-            android:background="@color/colorPrimaryDark"/>
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginRight="1dp"/>
 
         <Button
             android:id="@+id/validateButton"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Valider"
-            android:textAllCaps="false"
+            android:text="Validate"
+            android:textAllCaps="true"
             android:textStyle="bold"
-            android:layout_margin="5dp"
             android:textSize="18sp"
             android:textColor="@android:color/white"
-            android:background="@color/colorPrimaryDark"/>
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginLeft="1dp"/>
 
     </LinearLayout>
 

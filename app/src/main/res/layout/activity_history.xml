@@ -13,9 +13,13 @@
         android:padding="10dp"
         android:text="@string/some_text"
         android:textAlignment="center"
-        android:textSize="20sp"/>
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
     <ListView
         android:id="@+id/listView1"
+        android:layout_marginTop="1dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

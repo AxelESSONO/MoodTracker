@@ -1,8 +1,10 @@
 package com.axel.moodtracker.controller;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -12,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.Mood;
 
@@ -37,7 +41,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //mPreferences = getPreferences(MODE_PRIVATE);
+       // mPreferences = getPreferences(MODE_PRIVATE);
         //mPreferences.edit().putString(PREF_KEY_IMAGE, mood.getColor()).apply();
 
         mainIntent = new Intent(MainActivity.this, MoodActivity.class);
@@ -46,6 +50,20 @@ public class MainActivity extends AppCompatActivity
         txtAppName = (TextView) findViewById(R.id.name_of_app);
         txtVersion = (TextView) findViewById(R.id.version_name);
         progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        linearLayout = (LinearLayout) findViewById(R.id.linear_layout_main);
+
+        //SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        //int image = preferences.getInt("imageColorToDisplay", R.drawable.a_smiley_disappointed);
+
+
+        SharedPreferences data = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
+        int image = data.getInt(MoodActivity.IMAGE_RESSOURCE,  R.drawable.d_smiley_happy);
+        String resourceColor = data.getString(MoodActivity.IMAGE_COLOR, "#55B617");
+
+        //Toast.makeText(this, "la ressource est: " + image, Toast.LENGTH_SHORT).show();
+        imageView.setImageResource(image);
+        linearLayout.setBackgroundColor(Color.parseColor(resourceColor));
+
         //linearLayout = (LinearLayout) findViewById(R.id.linear_layout_main);
 
         Animation transitionAlfa = AnimationUtils.loadAnimation(this, R.anim.transition_alfa);
@@ -63,7 +81,7 @@ public class MainActivity extends AppCompatActivity
                 //startActivityForResult(mainIntent,MOOD_ACTIVITY_REQUEST_CODE);
                 MainActivity.this.finish();
             }
-        }, 5000);
+        }, 4000);
 
 
 
@@ -77,6 +95,49 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
+/*    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        int imageRessource = data.getIntExtra(MoodActivity.BUNDLE_EXTRA_IMAGE, 0)
+    }*/
+
+
+/*    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        String color = preferences.getString("imageColorToDisplay", null);
+        imageView.setImageResource(loadSmileyImage(color));
+
+    }*/
+
+
+    private int loadSmileyImage(String image) {
+        int idImage = 0;
+        if(image.equals("#AB1A49")) {
+            idImage = R.drawable.a_smiley_disappointed;
+        }
+        if(image.equals("#808A89")) {
+            idImage = R.drawable.b_smiley_sad;
+        }
+        if(image.equals("#3135D0")) {
+            idImage = R.drawable.c_smiley_normal;
+        }
+        if(image.equals("#55B617")) {
+            idImage = R.drawable.d_smiley_happy;
+        }
+        if(image.equals("#D0E807")) {
+            idImage =  R.drawable.e_smiley_super_happy;
+        }
+        return idImage;
+    }
+
+
+
 /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
