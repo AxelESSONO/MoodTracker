@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -18,14 +19,16 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.Mood;
 import com.axel.moodtracker.model.MoodDbAdapter;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MoodActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
-    public static final String IMAGE_RESSOURCE = "imageColorToDisplay" ;
+    public static final String IMAGE_RESSOURCE = "imageColorToDisplay";
     public static final String IMAGE_COLOR = "imageColor";
     public static final String STOCKAGE_INFOS = "data";
     private ImageView mImage;
@@ -37,7 +40,7 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
             R.drawable.d_smiley_happy,
             R.drawable.e_smiley_super_happy};
     private int i = 3;
-    private String resourceColor [] = {"#AB1A49","#808A89", "#3135D0", "#55B617", "#D0E807" };
+    private String resourceColor[] = {"#AB1A49", "#808A89", "#3135D0", "#55B617", "#D0E807"};
     private RelativeLayout relativeLayoutMood;
 
     private int retreiveImageRessource;
@@ -48,20 +51,8 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
     public static final String BUNDLE_EXTRA_COLOR = "BUNDLE_COLOR";
 
 
-    //SharedPreferences preferences;
-
-
-
-
-
-
-
-
-    //private MoodDbAdapter dbHelper;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood);
 
@@ -70,18 +61,27 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         mDatabaseHelper.open();
 
         this.moodActivity = this;
-        // the popup to write the coment
+        // the popup to write the comment
         final ImageView myPopup = findViewById(R.id.add_comment_button);
         //get ImageView
         mImage = (ImageView) findViewById(R.id.list_picture);
 
         // Instantiate the gesture detector with the
         // application context and an implementation of
-        mDetector = new GestureDetectorCompat(this,this);
+        mDetector = new GestureDetectorCompat(this, this);
         relativeLayoutMood = (RelativeLayout) findViewById(R.id.relative_layout_mood);
         mImage = (ImageView) findViewById(R.id.list_picture);
-        mImage.setImageResource(mImageRessource[i]);
-        relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[i]));
+
+        SharedPreferences data = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
+        int image = data.getInt(MoodActivity.IMAGE_RESSOURCE, R.drawable.d_smiley_happy);
+        String ColorResource = data.getString(MoodActivity.IMAGE_COLOR, "#55B617");
+
+        mImage.setImageResource(image);
+        //  mImage.setImageResource(mImageRessource[i]);
+        //relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[i]));
+        relativeLayoutMood.setBackgroundColor(Color.parseColor(ColorResource));
+
+
         // Set the gesture detector as the double tap
         // listener.
         mDetector.setOnDoubleTapListener(this);
@@ -89,8 +89,6 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         //moodDbAdapter = new MoodDbAdapter(this);
 
         //-----------------------------------------------------------------------------------------------------------------
-
-
 
         final SharedPreferences preferences = getSharedPreferences(STOCKAGE_INFOS, MODE_PRIVATE);
         final SharedPreferences.Editor editor = preferences.edit();
@@ -101,7 +99,7 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
             public void onClick(View v) {
 
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(MoodActivity.this);
-                final View mView = getLayoutInflater().inflate(R.layout.my_popup,null);
+                final View mView = getLayoutInflater().inflate(R.layout.my_popup, null);
 
                 mBuilder.setView(mView);
                 final AlertDialog dialog = mBuilder.create();
@@ -132,25 +130,28 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                         //saveCurrentTime = currentTime.format(calForDate.getTime());
 
                         // Check if field is not empty
-                        if(!(mComent.getText().toString()).isEmpty())
-                        {
-                            
+                        if (!(mComent.getText().toString()).isEmpty()) {
+
+                           /* mDatabaseHelper.deleteLine(mDatabaseHelper.getMoodId(saveCurrentDate),
+                                    mDatabaseHelper.mood.getComment(),
+                                    mDatabaseHelper.mood.getColor(),
+                                    mDatabaseHelper.mood.getDate());*/
+
                             //currentDateExist(newComment,newColor,saveCurrentDate);
 
                             //if(currentDateExistInDatabase(saveCurrentDate))
-                           // {
-                                //deleteMood(newComment,newColor,saveCurrentDate);
-                                addData(newComment,newColor, saveCurrentDate);
-                                mComent.setText("");
-                                Toast.makeText(MoodActivity.this,"Your comment has been saved successfully",Toast.LENGTH_SHORT).show();
+                            // {
+                            //deleteMood(newComment,newColor,saveCurrentDate);
+                            addData(newComment, newColor, saveCurrentDate);
+                            mComent.setText("");
+                            Toast.makeText(MoodActivity.this, "Your comment has been saved successfully", Toast.LENGTH_SHORT).show();
 
 
                             //preferences = getSharedPreferences(STOCKAGE_INFOS, 0);
-                                    //getPreferences(MODE_PRIVATE);
+                            //getPreferences(MODE_PRIVATE);
 
                             //preferences.edit().putInt(IMAGE_RESSOURCE, mImageRessource[i]).apply();
                             //preferences.edit().putString(IMAGE_COLOR, mColor).apply();
-
 
 
                             editor.putInt(IMAGE_RESSOURCE, mImageRessource[i]);
@@ -158,31 +159,25 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                             editor.commit();
 
 
+                            Intent moodIntent = new Intent();
+                            moodIntent.putExtra(String.valueOf(BUNDLE_EXTRA_IMAGE), mImageRessource[i]);
+                            moodIntent.putExtra(BUNDLE_EXTRA_COLOR, resourceColor[i]);
 
 
-                                Intent moodIntent = new Intent();
-                                moodIntent.putExtra(String.valueOf(BUNDLE_EXTRA_IMAGE), mImageRessource[i] );
-                                moodIntent.putExtra(BUNDLE_EXTRA_COLOR, resourceColor[i]);
-
-
-
-
-
-                                setResult(RESULT_OK, moodIntent);
-                                dialog.dismiss();
-                           // }
+                            setResult(RESULT_OK, moodIntent);
+                            dialog.dismiss();
+                            // }
                             /*else
                             {
                                 Toast.makeText(MoodActivity.this, "youpiiiiiiiiiiiiiiiiiiiiiii", Toast.LENGTH_SHORT).show();
                             }*/
 
 
-                        }
-                        else {
-                            addData(newComment,newColor, saveCurrentDate);
+                        } else {
+                            addData(newComment, newColor, saveCurrentDate);
                             //Toast.makeText(MoodActivity.this, newComment, Toast.LENGTH_SHORT).show();
                             mComent.setText("");
-                            Toast.makeText(MoodActivity.this,"Mood saved without comment",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MoodActivity.this, "Mood saved without comment", Toast.LENGTH_SHORT).show();
                             editor.putInt(IMAGE_RESSOURCE, mImageRessource[i]);
                             editor.putString(IMAGE_COLOR, resourceColor[i]);
                             editor.commit();
@@ -219,35 +214,40 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
 
 
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
-        mImage.setImageResource( mImageRessource[3]);
+        mImage.setImageResource(mImageRessource[3]);
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        mImage.setImageResource( mImageRessource[3]);
+        mImage.setImageResource(mImageRessource[3]);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mImage.setImageResource(mImageRessource[i]);
     }
 
     private int loadSmileyImage(String color) {
         int idImage = 0;
-        if(color.equals("#AB1A49")) {
+        if (color.equals("#AB1A49")) {
             idImage = R.drawable.a_smiley_disappointed;
         }
-        if(color.equals("#808A89")) {
+        if (color.equals("#808A89")) {
             idImage = R.drawable.b_smiley_sad;
         }
-        if(color.equals("#3135D0")) {
+        if (color.equals("#3135D0")) {
             idImage = R.drawable.c_smiley_normal;
         }
-        if(color.equals("#55B617")) {
+        if (color.equals("#55B617")) {
             idImage = R.drawable.d_smiley_happy;
         }
-        if(color.equals("#D0E807")) {
-            idImage =  R.drawable.e_smiley_super_happy;
+        if (color.equals("#D0E807")) {
+            idImage = R.drawable.e_smiley_super_happy;
         }
         return idImage;
     }
@@ -270,9 +270,9 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
 
         Boolean thisDateExist = false;
         Cursor cursor = mDatabaseHelper.fetchAllMood();
-                //(saveCurrentDate);
+        //(saveCurrentDate);
 
-        if( cursor != null && cursor.moveToFirst() ) {
+        if (cursor != null && cursor.moveToFirst()) {
             //String m_id = cursor.getString(0);
             //String m_comment = cursor.getString(1);
             //String m_color = cursor.getString(2);
@@ -284,30 +284,28 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                 thisDateExist = true;
             } else {
                 thisDateExist = false;
-
             }
-
         }
         return thisDateExist;
     }
 
 
-
     ////--------------------------------
-    public void addData(String comment,String color,String pDate) {
-        mDatabaseHelper.insertSomeMood(comment,color, pDate);
+    public void addData(String comment, String color, String pDate) {
+        mDatabaseHelper.insertSomeMood(comment, color, pDate);
     }
 
     /**
      * customizable message
+     *
      * @param message
      */
-    public void toastMessage(String message){
-        Toast.makeText(this,message,Toast.LENGTH_SHORT).show();
+    public void toastMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         if (this.mDetector.onTouchEvent(event)) {
             return true;
         }
@@ -315,44 +313,63 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
     }
 
     @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {return false;}
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        return false;
+    }
+
     @Override
-    public boolean onDoubleTap(MotionEvent e) {return false;}
+    public boolean onDoubleTap(MotionEvent e) {
+        return false;
+    }
+
     @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {return false;}
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
+    }
+
     @Override
-    public boolean onDown(MotionEvent e) {return false;}
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
     @Override
-    public void onShowPress(MotionEvent e) {}
+    public void onShowPress(MotionEvent e) {
+    }
+
     @Override
-    public boolean onSingleTapUp(MotionEvent e) {return false;}
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
     @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {return false;}
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
     @Override
-    public void onLongPress(MotionEvent e) {}
+    public void onLongPress(MotionEvent e) {
+    }
+
     @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
-    {
-        if(velocityY<0) {
-            if(i == 4) {
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (velocityY < 0) {
+            if (i == 4) {
                 mImage.setImageResource(mImageRessource[4]);
                 relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[4]));
-            }
-            else if(i<4) {
-                mImage.setImageResource(mImageRessource[i+1]);
-                relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[i+1]));
-                i = i+1;
+            } else if (i < 4) {
+                mImage.setImageResource(mImageRessource[i + 1]);
+                relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[i + 1]));
+                i = i + 1;
             }
         }
-        if(velocityY > 0) {
-            if(i == 0) {
+        if (velocityY > 0) {
+            if (i == 0) {
                 mImage.setImageResource(mImageRessource[0]);
                 relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[0]));
-            }
-            else if(i > 0) {
-                mImage.setImageResource(mImageRessource[i-1]);
-                relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[i-1]));
-                i = i-1;
+            } else if (i > 0) {
+                mImage.setImageResource(mImageRessource[i - 1]);
+                relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[i - 1]));
+                i = i - 1;
             }
         }
         return true;

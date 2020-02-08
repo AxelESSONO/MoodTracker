@@ -1,4 +1,5 @@
 package com.axel.moodtracker.controller;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.MoodDbAdapter;
 
@@ -40,16 +42,15 @@ import huxy.huxy.huxylab2.HuxyApp;
 
 import static com.axel.moodtracker.R.layout.layout_mood_info;
 
-public class HistoryActivity extends AppCompatActivity
-{
+public class HistoryActivity extends AppCompatActivity {
     private MoodDbAdapter dbHelper;
     private Date date1 = null;
     private Date date2 = null;
     private static long diff = 0;
+    private static String duration = "";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
         dbHelper = new MoodDbAdapter(this);
@@ -77,15 +78,14 @@ public class HistoryActivity extends AppCompatActivity
         return true;
     }
 
-    private void displayListView()
-    {
+    private void displayListView() {
         Cursor cursor = dbHelper.fetchAllMood();
         String[] columns = new String[]{MoodDbAdapter.DATE};
         final int[] to = new int[]{R.id.my_date};
         MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, layout_mood_info, cursor, columns, to, 0);
         ListView listView = (ListView) findViewById(R.id.listView1);
         // Assign adapter to ListView
-        listView.setAdapter(myCursorAdapter );
+        listView.setAdapter(myCursorAdapter);
     }
 
     //extend the SimpleCursorAdapter to create a custom class where we
@@ -93,17 +93,16 @@ public class HistoryActivity extends AppCompatActivity
     private class MyCursorAdapter extends SimpleCursorAdapter
     {
 
-        public MyCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags)
-        {
+        public MyCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
             super(context, layout, c, from, to, flags);
         }
+
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
+        public View getView(int position, View convertView, ViewGroup parent) {
             // ============================= get width of the screen ==========================================
             //get reference to the row
             View view = super.getView(position, convertView, parent);
-            RelativeLayout relativeLayout = (RelativeLayout)view.findViewById(R.id.relative_layout_info);
+            RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.relative_layout_info);
             TextView textView1 = (TextView) view.findViewById(R.id.my_date);
             ImageView imageView = (ImageView) view.findViewById(R.id.display_image_comment);
             ListView listView = (ListView) findViewById(R.id.listView1);
@@ -118,27 +117,24 @@ public class HistoryActivity extends AppCompatActivity
             try {
                 dateMood = cursor.getString(cursor.getColumnIndex(MoodDbAdapter.DATE));
                 date2 = df.parse(dateMood);
-                diff = (date1.getTime() - date2.getTime())/86400000;
+                diff = (date1.getTime() - date2.getTime()) / 86400000;
+                duration = durationInLetter(diff);
                 //diff = diff/ 1000 / 60 / 60 / 24;
                 //textView1.setText("Il y'a: " + diff + " jours");
             } catch (ParseException e) {
                 e.printStackTrace();
-            }
-            finally
-            {
+            } finally {
                 //Toast.makeText(getApplicationContext(), "Il y'a ooo: " + diff + " jours", Toast.LENGTH_SHORT).show();
-                textView1.setText("Il y'a: " + diff + " jours");
+                textView1.setText(duration);
             }
 
-            view.setLayoutParams(new LinearLayout.LayoutParams(resizeWidthAccordingToMood(moodColor), measureHeight()/7));
-            relativeLayout.setOnClickListener(new View.OnClickListener()
-            {
+            view.setLayoutParams(new LinearLayout.LayoutParams(resizeWidthAccordingToMood(moodColor), measureHeight() / 7));
+            relativeLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v)
-                {
+                public void onClick(View v) {
                     Intent intent = new Intent(HistoryActivity.this, ContactsActivity.class);
                     intent.putExtra("myComment", moodComment);
-                    intent.putExtra("colorMood",moodColor);
+                    intent.putExtra("colorMood", moodColor);
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 }
@@ -153,13 +149,12 @@ public class HistoryActivity extends AppCompatActivity
                     @Override
                     public void onClick(View v) {
                         // Customize Toast message that display comment, and I set background color according to mood color
-                        String textColor ="#ffffff";
-                        HuxyApp.customToast(HistoryActivity.this, moodComment,moodColor,textColor)
-                                .setPositionAndOffSet(Gravity.BOTTOM,0,20);
+                        String textColor = "#ffffff";
+                        HuxyApp.customToast(HistoryActivity.this, moodComment, moodColor, textColor)
+                                .setPositionAndOffSet(Gravity.BOTTOM, 0, 20);
                     }
                 });
-            }
-            else {
+            } else {
                 //imageView.setVisibility(View.INVISIBLE);
                 //Toast.makeText(HistoryActivity.this, "Pas de commentaire", Toast.LENGTH_SHORT).show();
             }
@@ -169,16 +164,13 @@ public class HistoryActivity extends AppCompatActivity
         @Override
         public int getCount() {
             int count = 0;
-            if(getCursor().getCount()< 0)
-            {
+            if (getCursor().getCount() < 0) {
                 count = 0;
             }
-            if(getCursor().getCount() >= 0 && getCursor().getCount() <= 7)
-            {
+            if (getCursor().getCount() >= 0 && getCursor().getCount() <= 7) {
                 count = getCursor().getCount();
             }
-            if(getCursor().getCount() > 7)
-            {
+            if (getCursor().getCount() > 7) {
                 count = 7;
             }
             return count;
@@ -189,12 +181,11 @@ public class HistoryActivity extends AppCompatActivity
         WindowManager wm = (WindowManager) this.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int screenWidth;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             Point size = new Point();
             display.getSize(size);
             screenWidth = size.x;
-        }
-        else {
+        } else {
             screenWidth = display.getWidth();
         }
         return screenWidth;
@@ -204,33 +195,42 @@ public class HistoryActivity extends AppCompatActivity
         WindowManager wm = (WindowManager) this.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int screenHeight;
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             Point size = new Point();
             display.getSize(size);
-            screenHeight= size.y;
-        }
-        else {
+            screenHeight = size.y;
+        } else {
             screenHeight = display.getWidth();
         }
         return screenHeight;
     }
+
     private int resizeWidthAccordingToMood(String paramColor) {
+        String colorIndex[] = {"#AB1A49", "#808A89", "#3135D0", "#55B617", "#D0E807"};
+        int widthSet[] = {5, 4, 3, 2, 1};
         int newWidth = 0;
-        if(paramColor.equals("#AB1A49")) {
-            newWidth = measureWidth()/5;
-        }
-        if(paramColor.equals("#808A89")) {
-            newWidth = measureWidth()/4;
-        }
-        if(paramColor.equals("#3135D0")) {
-            newWidth = measureWidth()/3;
-        }
-        if(paramColor.equals("#55B617")) {
-            newWidth = measureWidth()/2;
-        }
-        if(paramColor.equals("#D0E807")) {
-            newWidth = measureWidth();
+        for (int i = 0; i < colorIndex.length; i++) {
+            if (paramColor.equals(colorIndex[i])) {
+                newWidth = measureWidth() / widthSet[i];
+            }
         }
         return newWidth;
+    }
+
+    /**
+     * @param last this method convert duration into letter, e.g : if duration = 5 days
+     *             durationInLetter returns "five"
+     * @return value
+     */
+    private String durationInLetter(long last) {
+        String value = "";
+        String letters[] = {"Aujourd'hui", "Hier", "Avant hier", "Il y'a trois jours", "Il y'a quatre jours", "Il y'a cinq jours", "Il y'a six jours", "Il y'a une semaine"};
+        long diff[] = {0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L};
+        for (int i = 0; i < diff.length; i++) {
+            if (last == diff[i]) {
+                value = letters[i];
+            }
+        }
+        return value;
     }
 }
