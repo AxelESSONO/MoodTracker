@@ -43,12 +43,15 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
     private String resourceColor[] = {"#AB1A49", "#808A89", "#3135D0", "#55B617", "#D0E807"};
     private RelativeLayout relativeLayoutMood;
 
+    public static String mComment = null, mColor = null, mDate = null;
+
     private int retreiveImageRessource;
     private String retreive;
 
-    MoodDbAdapter mDatabaseHelper;
+    private MoodDbAdapter mDatabaseHelper;
     public static final int BUNDLE_EXTRA_IMAGE = 10;
     public static final String BUNDLE_EXTRA_COLOR = "BUNDLE_COLOR";
+    public SharedPreferences tmp;
 
 
     @Override
@@ -123,58 +126,33 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
                         // get date and time
                         final String saveCurrentDate;
                         Calendar calForDate = Calendar.getInstance();
-                        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy  HH : mm : ss");
+                        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
                         saveCurrentDate = currentDate.format(calForDate.getTime());
 
-                        //SimpleDateFormat currentTime = new SimpleDateFormat(" HH : mm : ss");
-                        //saveCurrentTime = currentTime.format(calForDate.getTime());
+                        Mood mood = new Mood(newComment,newColor,saveCurrentDate);
+
+                        saveAllDataInPreferences(newComment, newColor, saveCurrentDate);
 
                         // Check if field is not empty
                         if (!(mComent.getText().toString()).isEmpty()) {
 
-                           /* mDatabaseHelper.deleteLine(mDatabaseHelper.getMoodId(saveCurrentDate),
-                                    mDatabaseHelper.mood.getComment(),
-                                    mDatabaseHelper.mood.getColor(),
-                                    mDatabaseHelper.mood.getDate());*/
+                            addData(mood);
 
-                            //currentDateExist(newComment,newColor,saveCurrentDate);
-
-                            //if(currentDateExistInDatabase(saveCurrentDate))
-                            // {
-                            //deleteMood(newComment,newColor,saveCurrentDate);
-                            addData(newComment, newColor, saveCurrentDate);
                             mComent.setText("");
-                            Toast.makeText(MoodActivity.this, "Your comment has been saved successfully", Toast.LENGTH_SHORT).show();
-
-
-                            //preferences = getSharedPreferences(STOCKAGE_INFOS, 0);
-                            //getPreferences(MODE_PRIVATE);
-
-                            //preferences.edit().putInt(IMAGE_RESSOURCE, mImageRessource[i]).apply();
-                            //preferences.edit().putString(IMAGE_COLOR, mColor).apply();
-
-
+                            Toast.makeText(MoodActivity.this, "Your mood has been saved successfully", Toast.LENGTH_SHORT).show();
                             editor.putInt(IMAGE_RESSOURCE, mImageRessource[i]);
                             editor.putString(IMAGE_COLOR, resourceColor[i]);
                             editor.commit();
-
 
                             Intent moodIntent = new Intent();
                             moodIntent.putExtra(String.valueOf(BUNDLE_EXTRA_IMAGE), mImageRessource[i]);
                             moodIntent.putExtra(BUNDLE_EXTRA_COLOR, resourceColor[i]);
 
-
                             setResult(RESULT_OK, moodIntent);
                             dialog.dismiss();
-                            // }
-                            /*else
-                            {
-                                Toast.makeText(MoodActivity.this, "youpiiiiiiiiiiiiiiiiiiiiiii", Toast.LENGTH_SHORT).show();
-                            }*/
-
 
                         } else {
-                            addData(newComment, newColor, saveCurrentDate);
+                            addData(mood);
                             //Toast.makeText(MoodActivity.this, newComment, Toast.LENGTH_SHORT).show();
                             mComent.setText("");
                             Toast.makeText(MoodActivity.this, "Mood saved without comment", Toast.LENGTH_SHORT).show();
@@ -204,7 +182,6 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
             @Override
             public void onClick(View v) {
 
-
                 Intent historyActivity = new Intent(MoodActivity.this, HistoryActivity.class);
                 startActivity(historyActivity);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
@@ -212,29 +189,69 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         });
     }
 
+    public void saveAllDataInPreferences(String pref_comment, String pref_color, String pref_currentDate) {
+
+        tmp = getSharedPreferences(STOCKAGE_INFOS, MODE_PRIVATE);
+        SharedPreferences.Editor pref_editor = tmp.edit();
+        pref_editor.putString("pref_comment", pref_comment);
+        pref_editor.putString("pref_color", pref_color);
+        pref_editor.putString("pref_date", pref_currentDate);
+        pref_editor.commit();
+
+        mComment = pref_comment;
+        mColor = pref_color;
+        mDate = pref_currentDate;
+    }
+
 
     @Override
     protected void onPause() {
         super.onPause();
-        mImage.setImageResource(mImageRessource[3]);
+        //mImage.setImageResource(mImageRessource[3]);
+        saveData();
+    }
+
+    public Boolean dataExist(String date)
+    {
+
+
+
+
+        return true;
+    }
+
+    private void saveData() {
+        SharedPreferences data = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
+        int image = data.getInt(MoodActivity.IMAGE_RESSOURCE, R.drawable.d_smiley_happy);
+        String resourceColor = data.getString(MoodActivity.IMAGE_COLOR, "#55B617");
+        mImage.setImageResource(image);
+        relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor));
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        mImage.setImageResource(mImageRessource[3]);
+        //mImage.setImageResource(mImageRessource[3]);
+        saveData();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mImage.setImageResource(mImageRessource[i]);
+        //mImage.setImageResource(mImageRessource[i]);
+        saveData();
     }
 
     private int loadSmileyImage(String color) {
         int idImage = 0;
-        if (color.equals("#AB1A49")) {
+        for(int i = 0; i < resourceColor.length; i++) {
+            if(color.equals(resourceColor[i])) {
+                idImage = mImageRessource[i];
+            }
+        }
+
+/*        if (color.equals("#AB1A49")) {
             idImage = R.drawable.a_smiley_disappointed;
         }
         if (color.equals("#808A89")) {
@@ -248,7 +265,7 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         }
         if (color.equals("#D0E807")) {
             idImage = R.drawable.e_smiley_super_happy;
-        }
+        }*/
         return idImage;
     }
 
@@ -266,33 +283,11 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         mDatabaseHelper.deleteOneLine(m_id, m_date);
     }*/
 
-    private Boolean currentDateExistInDatabase(String date) {
-
-        Boolean thisDateExist = false;
-        Cursor cursor = mDatabaseHelper.fetchAllMood();
-        //(saveCurrentDate);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            //String m_id = cursor.getString(0);
-            //String m_comment = cursor.getString(1);
-            //String m_color = cursor.getString(2);
-            String m_date = cursor.getString(3);
-
-            //Mood mood = new Mood(m_comment, m_color, m_date);
-
-            if (date.equals(m_date)) {
-                thisDateExist = true;
-            } else {
-                thisDateExist = false;
-            }
-        }
-        return thisDateExist;
-    }
 
 
     ////--------------------------------
-    public void addData(String comment, String color, String pDate) {
-        mDatabaseHelper.insertSomeMood(comment, color, pDate);
+    public void addData(Mood mood) {
+        mDatabaseHelper.insertSomeMood(mood);
     }
 
     /**

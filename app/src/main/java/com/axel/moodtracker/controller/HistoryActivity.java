@@ -3,6 +3,7 @@ package com.axel.moodtracker.controller;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -49,6 +50,11 @@ public class HistoryActivity extends AppCompatActivity {
     private static long diff = 0;
     private static String duration = "";
 
+    private String main_comment, main_color, main_date;
+
+
+    private Button delete;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +62,49 @@ public class HistoryActivity extends AppCompatActivity {
         dbHelper = new MoodDbAdapter(this);
         dbHelper.open();
 
+
+        delete = (Button) findViewById(R.id.delete_btn);
+
         //Clean all data
         //dbHelper.deleteAllMood();
+
         //Generate ListView from SQLite Database
         displayListView();
+
+
+
+        delete.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+
+
+                String deleteDate;
+                Calendar calForDate = Calendar.getInstance();
+                SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
+                deleteDate = currentDate.format(calForDate.getTime());
+
+               // retreiveAllDataInDatabase();
+                //deleteFirstData(dbHelper.getRowid(deleteDate));
+                MoodDbAdapter moodDbAdapter = new MoodDbAdapter(HistoryActivity.this);
+                moodDbAdapter.getRowid(deleteDate);
+                //dbHelper.getRowid(deleteDate);
+            }
+        });
+    }
+
+    public void deleteFirstData(String Hmood_date)
+    {
+        dbHelper.deleteFirstMood(Hmood_date);
+    }
+
+    private void retreiveAllDataInDatabase() {
+
+        SharedPreferences newData = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
+        main_comment = newData.getString(MoodActivity.mComment, "");
+        main_color = newData.getString(MoodActivity.mColor, "");
+        main_date = newData.getString(MoodActivity.mDate, "");
     }
 
 
@@ -80,13 +125,18 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void displayListView() {
         Cursor cursor = dbHelper.fetchAllMood();
+
         String[] columns = new String[]{MoodDbAdapter.DATE};
+
         final int[] to = new int[]{R.id.my_date};
         MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, layout_mood_info, cursor, columns, to, 0);
         ListView listView = (ListView) findViewById(R.id.listView1);
         // Assign adapter to ListView
         listView.setAdapter(myCursorAdapter);
     }
+
+
+
 
     //extend the SimpleCursorAdapter to create a custom class where we
     //can override the getView to change the row colors
@@ -102,16 +152,20 @@ public class HistoryActivity extends AppCompatActivity {
             // ============================= get width of the screen ==========================================
             //get reference to the row
             View view = super.getView(position, convertView, parent);
+
             RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.relative_layout_info);
             TextView textView1 = (TextView) view.findViewById(R.id.my_date);
             ImageView imageView = (ImageView) view.findViewById(R.id.display_image_comment);
             ListView listView = (ListView) findViewById(R.id.listView1);
+
             Cursor cursor = (Cursor) listView.getItemAtPosition(position);
+
             // Get the state's capital from this row in the database.
             final String moodColor = cursor.getString(cursor.getColumnIndexOrThrow("color"));
             final String moodComment = cursor.getString(cursor.getColumnIndexOrThrow("comment"));
+
             String dateMood = null;
-            DateFormat df = new SimpleDateFormat("dd MMM yyyy  HH : mm : ss");
+            DateFormat df = new SimpleDateFormat("dd MMM yyyy");
             Date date1 = new java.util.Date();
             Date date2 = null;
             try {
@@ -119,12 +173,15 @@ public class HistoryActivity extends AppCompatActivity {
                 date2 = df.parse(dateMood);
                 diff = (date1.getTime() - date2.getTime()) / 86400000;
                 duration = durationInLetter(diff);
-                //diff = diff/ 1000 / 60 / 60 / 24;
-                //textView1.setText("Il y'a: " + diff + " jours");
             } catch (ParseException e) {
                 e.printStackTrace();
             } finally {
-                //Toast.makeText(getApplicationContext(), "Il y'a ooo: " + diff + " jours", Toast.LENGTH_SHORT).show();
+
+               /* if(duration.equals("Aujourd'hui"))
+                {
+
+                }*/
+
                 textView1.setText(duration);
             }
 
@@ -161,6 +218,9 @@ public class HistoryActivity extends AppCompatActivity {
             return view;
         }
 
+
+
+
         @Override
         public int getCount() {
             int count = 0;
@@ -177,6 +237,9 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     private int measureWidth() {
         WindowManager wm = (WindowManager) this.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -190,7 +253,6 @@ public class HistoryActivity extends AppCompatActivity {
         }
         return screenWidth;
     }
-
     private int measureHeight() {
         WindowManager wm = (WindowManager) this.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -204,7 +266,6 @@ public class HistoryActivity extends AppCompatActivity {
         }
         return screenHeight;
     }
-
     private int resizeWidthAccordingToMood(String paramColor) {
         String colorIndex[] = {"#AB1A49", "#808A89", "#3135D0", "#55B617", "#D0E807"};
         int widthSet[] = {5, 4, 3, 2, 1};

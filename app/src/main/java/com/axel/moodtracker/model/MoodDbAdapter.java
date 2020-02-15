@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 public class MoodDbAdapter
 {
@@ -33,10 +34,11 @@ public class MoodDbAdapter
                     COMMENT + "," +
                     COLOR + "," +
                     DATE + "," +
-                    " UNIQUE (" + COMMENT + "));";
+                    " UNIQUE (" + DATE + "));";
     public Mood mood;
 
-    // DataBaseHelper -------------------------------------------------------------------
+
+    // ===================== DatabaseHelper =================================
     private static class DatabaseHelper extends SQLiteOpenHelper
     {
         public DatabaseHelper(Context context) {
@@ -54,42 +56,108 @@ public class MoodDbAdapter
             onCreate(db);
         }
 
-        public int deleteOneLine(String mood_id, String mood_comment, String mood_color, String mood_date){
+        public Integer deleteContact(int id){
             SQLiteDatabase db = this.getWritableDatabase();
-            String query = "DELETE FROM " + SQLITE_TABLE + " WHERE "
-                    + KEY_ID + " = '" + mood_id + "'" + ","
-                    + COMMENT + " = '" + mood_comment + "'" + ","
-                    + COLOR + " = '" + mood_color + "'" +
-                    " AND " + DATE + " = '" + mood_date + "'";
-            Log.d(TAG, "deleteName: query: " + query);
+            return db.delete(SQLITE_TABLE, "_id = ?", new String[] {String.valueOf(id)});
+        }
 
+
+
+        public void deleteOneLine(String mood_comment,String  mood_color,String mood_date)
+        {
+            SQLiteDatabase db = this.getWritableDatabase();
+            //String mood_comment,String  mood_color,String mood_date
+            String query = "DELETE FROM " + SQLITE_TABLE + " WHERE "
+                    + MoodDbAdapter.COMMENT + "=?"
+                    +  MoodDbAdapter.COLOR + "=?"
+                    + " AND " +  MoodDbAdapter.DATE + "=?";
+
+
+            Log.d(TAG, "deleteName: query: " + query);
             Log.d(TAG, "deleteComment: Deleting " + mood_comment + " from database.");
             Log.d(TAG, "deleteColor: Deleting " + mood_color + " from database.");
             Log.d(TAG, "deleteName: Deleting " + mood_date + " from database.");
+
+            //+ KEY_ID + " = '" +getID(mood_date)+ "'" + ","
+
             db.execSQL(query);
-            return 2;
+
         }
 
 
-        /**
-         * Returns only the ID that matches the name passed in
-         * @param date
-         * @return
-         */
-        public Cursor getID(String date){
+        public void getID(String date){
             SQLiteDatabase db = this.getWritableDatabase();
-            String query = "SELECT " + KEY_ID + " FROM " + SQLITE_TABLE +
-                    " WHERE " + DATE + " = '" + date + "'";
-            Cursor data = db.rawQuery(query, null);
-            return data;
+            String query = "DELETE  FROM " + SQLITE_TABLE +
+                    " WHERE "
+                    + DATE + " =' " + date +"'";
+
+             db.rawQuery(query, null);
         }
+
 
     }
-    //End DataBaseHelper -------------------------------------------------------------------
+    // =================================== End DataBaseHelper ==============================================
 
     public MoodDbAdapter(Context pContext) {
         this.mContext = pContext;
     }
+
+
+
+
+    public void getRowid(String date)
+    {
+
+
+        mDbHelper = new DatabaseHelper(mContext);
+        mDbHelper.getID(date);
+
+      /*  mDbHelper = new DatabaseHelper(mContext);
+
+        String rowID = "";
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        long temp;
+
+        Cursor c = db.rawQuery("SELECT * FROM " + SQLITE_TABLE + " WHERE DATE = ?" , new String[] { date });
+        if (c != null && c.moveToFirst())
+        {
+            temp = c.getLong(c.getColumnIndex(KEY_ID));
+            rowID = String.valueOf(temp);
+            Log.i("----_ROW ID = ", rowID);
+        }
+        if (c != null && !c.moveToFirst())
+        {
+            c.moveToFirst();
+            rowID = String.valueOf(c.getLong(c.getColumnIndex(KEY_ID)));
+            Log.i("CURSOR ERROR", " CURSOR INDEX MOST LIKELY 0");
+        }
+        else
+        {
+            c.moveToFirst();
+            rowID = String.valueOf(c.getLong(c.getColumnIndex(KEY_ID)));
+        }
+        return rowID;*/
+    }
+
+
+
+
+
+    public boolean deleteFirstMood(String date)
+    {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        return db.delete(SQLITE_TABLE,KEY_ID + "= ?", new String[] { date}) > 0;
+
+    }
+
+
+
+
+
+
+
+
 
     public MoodDbAdapter open() throws SQLException {
         mDbHelper = new DatabaseHelper(mContext);
@@ -97,15 +165,11 @@ public class MoodDbAdapter
         return this;
     }
 
-    public String getMoodId(String date)
-    {
-        return mDbHelper.getID(date).toString();
-    }
 
-    public boolean deleteLine(String id, String comment, String color, String date)
+    public boolean deleteLine(String comment, String color, String date)
     {
         int lineDeleted = 0;
-        lineDeleted =  mDbHelper.deleteOneLine(id,comment,color,date);
+        //lineDeleted =  mDbHelper.deleteOneLine(comment,color,date);
         return lineDeleted > 0;
 
     }
@@ -116,21 +180,80 @@ public class MoodDbAdapter
         }
     }
 
-    public long createMood(String comment, String color, String date) {
+    public boolean createMood(Mood mood) {
         //open();
 
         mDbHelper = new DatabaseHelper(mContext);
         mDb = mDbHelper.getWritableDatabase();
 
+        // Check if this date exists in database
+
         ContentValues initialValues = new ContentValues();
-        initialValues.put(COMMENT, comment);
-        initialValues.put(COLOR, color);
-        initialValues.put(DATE, date);
+        initialValues.put(COMMENT, mood.getComment());
+        initialValues.put(COLOR, mood.getColor());
+        initialValues.put(DATE, mood.getDate());
 
-        mood = new Mood(comment,color, date);
+        //return mDb.insert(SQLITE_TABLE, null, initialValues);
 
-        return mDb.insert(SQLITE_TABLE, null, initialValues);
+        long result = mDb.insert(SQLITE_TABLE, null, initialValues);
+
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+
     }
+
+
+    public boolean updateMood(Mood mood, int id){
+        mDbHelper = new DatabaseHelper(mContext);
+        mDb = mDbHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COMMENT, mood.getComment());
+        contentValues.put(COLOR, mood.getColor());
+        contentValues.put(DATE, mood.getDate());
+
+        int update = mDb.update(SQLITE_TABLE, contentValues, KEY_ID + " = ? ", new String[] {String.valueOf(id)} );
+
+        if(update != 1) {
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+
+
+    public Cursor getAllMood(){
+        mDbHelper = new DatabaseHelper(mContext);
+        mDb = mDbHelper.getWritableDatabase();
+        return mDb.rawQuery("SELECT * FROM " + SQLITE_TABLE, null);
+    }
+
+
+
+    public Cursor getMyMoodID(Mood mood){
+        mDbHelper = new DatabaseHelper(mContext);
+        mDb = mDbHelper.getWritableDatabase();
+
+        String sql = "SELECT * FROM " + SQLITE_TABLE  +
+                " WHERE " + COMMENT + " = '" + mood.getComment() + "'" +
+                " AND " + DATE + " = '" + mood.getDate() + "'";
+        return mDb.rawQuery(sql, null);
+    }
+
+    public Integer deleteAMood(String id){
+        mDbHelper = new DatabaseHelper(mContext);
+        mDb = mDbHelper.getWritableDatabase();
+
+        return mDb.delete(SQLITE_TABLE, "_id = ?", new String[] {String.valueOf(id)});
+    }
+
+
+
+
 
     public boolean deleteAllMood()
     {
@@ -138,6 +261,12 @@ public class MoodDbAdapter
         doneDelete = mDb.delete(SQLITE_TABLE, null, null);
         Log.w(TAG, Integer.toString(doneDelete));
         return doneDelete > 0;
+    }
+
+    public void deleteMood(String mood_comment, String mood_color, String mood_date)
+    {
+        DatabaseHelper databaseHelper = new DatabaseHelper(mContext);
+        databaseHelper.deleteOneLine(mood_comment, mood_color, mood_date);
     }
 
 
@@ -195,9 +324,8 @@ public class MoodDbAdapter
         return mCursor;
     }
 
-    public void insertSomeMood(String pComment, String pColor, String pDate)
+    public void insertSomeMood(Mood mood)
     {
-        createMood(pComment, pColor, pDate);
+        createMood(mood);
     }
-
 }
