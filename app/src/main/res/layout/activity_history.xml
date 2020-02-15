@@ -6,21 +6,19 @@
     android:orientation="vertical"
     tools:context=".controller.HistoryActivity">
 
-    <!--    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:text="@string/some_text"
-            android:textAlignment="center"
-            android:background="@color/colorPrimaryDark"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"/>-->
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="0dp" />
+
+    <ImageView
+        android:id="@+id/no_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="invisible"
+        android:src="@drawable/nodata"/>
 
     <Button
         android:id="@+id/delete_btn"
@@ -32,5 +30,6 @@
         android:background="@color/colorPrimaryDark"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"/>
+
 
 </RelativeLayout>

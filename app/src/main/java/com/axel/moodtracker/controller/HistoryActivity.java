@@ -54,6 +54,7 @@ public class HistoryActivity extends AppCompatActivity {
 
 
     private Button delete;
+    private ImageView nodataImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class HistoryActivity extends AppCompatActivity {
 
 
         delete = (Button) findViewById(R.id.delete_btn);
+        nodataImage = (ImageView) findViewById(R.id.no_data);
 
         //Clean all data
         //dbHelper.deleteAllMood();
@@ -88,10 +90,13 @@ public class HistoryActivity extends AppCompatActivity {
                // retreiveAllDataInDatabase();
                 //deleteFirstData(dbHelper.getRowid(deleteDate));
                 MoodDbAdapter moodDbAdapter = new MoodDbAdapter(HistoryActivity.this);
-                moodDbAdapter.getRowid(deleteDate);
+                moodDbAdapter.getRowId(deleteDate);
                 //dbHelper.getRowid(deleteDate);
+
+                displayListView();
             }
         });
+
     }
 
     public void deleteFirstData(String Hmood_date)
@@ -125,6 +130,11 @@ public class HistoryActivity extends AppCompatActivity {
 
     private void displayListView() {
         Cursor cursor = dbHelper.fetchAllMood();
+
+        if(cursor.getCount() == 0)
+        {
+            nodataImage.setVisibility(View.VISIBLE);
+        }
 
         String[] columns = new String[]{MoodDbAdapter.DATE};
 
