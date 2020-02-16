@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linear_layout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/linear_layout_main"
     android:background="@color/colorBackgroundGreen"
-    tools:context=".controller.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".controller.MainActivity">
 
     <ImageView
         android:id="@+id/smiley_icon"
@@ -17,44 +16,41 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:clickable="true"/>
+        android:clickable="true" />
 
     <TextView
         android:id="@+id/name_of_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:text="MoodTracker App"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
         android:textAllCaps="false"
-        android:layout_gravity="center"/>
-
+        android:textColor="@android:color/white"
+        android:textSize="30dp"
+        android:textStyle="bold" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_gravity="center"
         android:layout_centerHorizontal="true"
-        android:progress="@android:integer/config_mediumAnimTime"
-        android:indeterminateDrawable="@drawable/progress"/>
-
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:indeterminateDrawable="@drawable/progress"
+        android:progress="@android:integer/config_mediumAnimTime" />
 
     <TextView
         android:id="@+id/version_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Version 1.0"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:textAllCaps="false"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
-        android:layout_alignParentBottom="true"/>
-
+        android:text="Version 1.0"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
 </LinearLayout>

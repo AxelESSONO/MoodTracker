@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linear_layout_containing_smiley"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:id="@+id/linear_layout_containing_smiley">
+    android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/item_happy_smiley"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/d_smiley_happy"
-        android:id="@+id/item_happy_smiley"
         android:layout_gravity="center"
-        android:paddingRight="30dp"
         android:paddingLeft="30dp"
-        android:paddingBottom="100dp">
+        android:paddingRight="30dp"
+        android:paddingBottom="100dp"
+        android:src="@drawable/d_smiley_happy">
 
     </ImageView>
 

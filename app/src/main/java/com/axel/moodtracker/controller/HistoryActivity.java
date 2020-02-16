@@ -3,21 +3,17 @@ package com.axel.moodtracker.controller;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,7 +21,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,9 +30,7 @@ import com.axel.moodtracker.model.MoodDbAdapter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import huxy.huxy.huxylab2.HuxyApp;
 
@@ -49,12 +42,10 @@ public class HistoryActivity extends AppCompatActivity {
     private Date date2 = null;
     private static long diff = 0;
     private static String duration = "";
-
     private String main_comment, main_color, main_date;
-
-
     private Button delete;
     private ImageView nodataImage;
+    private TextView nodataTxt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +55,9 @@ public class HistoryActivity extends AppCompatActivity {
         dbHelper.open();
 
 
-        delete = (Button) findViewById(R.id.delete_btn);
         nodataImage = (ImageView) findViewById(R.id.no_data);
+        nodataTxt = (TextView) findViewById(R.id.no_data_txt);
+        //delete = (Button) findViewById(R.id.deleteAll);
 
         //Clean all data
         //dbHelper.deleteAllMood();
@@ -73,45 +65,15 @@ public class HistoryActivity extends AppCompatActivity {
         //Generate ListView from SQLite Database
         displayListView();
 
-
-
-        delete.setOnClickListener(new View.OnClickListener()
-        {
+   /*     delete.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-
-
-                String deleteDate;
-                Calendar calForDate = Calendar.getInstance();
-                SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
-                deleteDate = currentDate.format(calForDate.getTime());
-
-               // retreiveAllDataInDatabase();
-                //deleteFirstData(dbHelper.getRowid(deleteDate));
-                MoodDbAdapter moodDbAdapter = new MoodDbAdapter(HistoryActivity.this);
-                moodDbAdapter.getRowId(deleteDate);
-                //dbHelper.getRowid(deleteDate);
-
+            public void onClick(View v) {
+                dbHelper.deleteAllMood();
                 displayListView();
             }
-        });
+        });*/
 
     }
-
-    public void deleteFirstData(String Hmood_date)
-    {
-        dbHelper.deleteFirstMood(Hmood_date);
-    }
-
-    private void retreiveAllDataInDatabase() {
-
-        SharedPreferences newData = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
-        main_comment = newData.getString(MoodActivity.mComment, "");
-        main_color = newData.getString(MoodActivity.mColor, "");
-        main_date = newData.getString(MoodActivity.mDate, "");
-    }
-
 
     @Override
     public void finish() {
@@ -131,34 +93,30 @@ public class HistoryActivity extends AppCompatActivity {
     private void displayListView() {
         Cursor cursor = dbHelper.fetchAllMood();
 
-        if(cursor.getCount() == 0)
-        {
+        if (cursor.getCount() == 0) {
             nodataImage.setVisibility(View.VISIBLE);
+            nodataTxt.setVisibility(View.VISIBLE);
+        } else {
+            String[] columns = new String[]{MoodDbAdapter.DATE};
+            final int[] to = new int[]{R.id.my_date};
+            MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, layout_mood_info, cursor, columns, to, 0);
+            ListView listView = (ListView) findViewById(R.id.listView1);
+            // Assign adapter to ListView
+            listView.setAdapter(myCursorAdapter);
         }
-
-        String[] columns = new String[]{MoodDbAdapter.DATE};
-
-        final int[] to = new int[]{R.id.my_date};
-        MyCursorAdapter myCursorAdapter = new MyCursorAdapter(this, layout_mood_info, cursor, columns, to, 0);
-        ListView listView = (ListView) findViewById(R.id.listView1);
-        // Assign adapter to ListView
-        listView.setAdapter(myCursorAdapter);
     }
-
-
 
 
     //extend the SimpleCursorAdapter to create a custom class where we
     //can override the getView to change the row colors
-    private class MyCursorAdapter extends SimpleCursorAdapter
-    {
+    private class MyCursorAdapter extends SimpleCursorAdapter {
 
         public MyCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
             super(context, layout, c, from, to, flags);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             // ============================= get width of the screen ==========================================
             //get reference to the row
             View view = super.getView(position, convertView, parent);
@@ -167,7 +125,6 @@ public class HistoryActivity extends AppCompatActivity {
             TextView textView1 = (TextView) view.findViewById(R.id.my_date);
             ImageView imageView = (ImageView) view.findViewById(R.id.display_image_comment);
             ListView listView = (ListView) findViewById(R.id.listView1);
-
             Cursor cursor = (Cursor) listView.getItemAtPosition(position);
 
             // Get the state's capital from this row in the database.
@@ -186,12 +143,6 @@ public class HistoryActivity extends AppCompatActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             } finally {
-
-               /* if(duration.equals("Aujourd'hui"))
-                {
-
-                }*/
-
                 textView1.setText(duration);
             }
 
@@ -204,6 +155,7 @@ public class HistoryActivity extends AppCompatActivity {
                     intent.putExtra("colorMood", moodColor);
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
                 }
             });
 
@@ -222,33 +174,18 @@ public class HistoryActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                //imageView.setVisibility(View.INVISIBLE);
+                imageView.setVisibility(View.INVISIBLE);
                 //Toast.makeText(HistoryActivity.this, "Pas de commentaire", Toast.LENGTH_SHORT).show();
             }
             return view;
         }
 
-
-
-
         @Override
         public int getCount() {
-            int count = 0;
-            if (getCursor().getCount() < 0) {
-                count = 0;
-            }
-            if (getCursor().getCount() >= 0 && getCursor().getCount() <= 7) {
-                count = getCursor().getCount();
-            }
-            if (getCursor().getCount() > 7) {
-                count = 7;
-            }
+            int count = getCursor().getCount();
             return count;
         }
     }
-
-
-
 
     private int measureWidth() {
         WindowManager wm = (WindowManager) this.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
@@ -263,6 +200,7 @@ public class HistoryActivity extends AppCompatActivity {
         }
         return screenWidth;
     }
+
     private int measureHeight() {
         WindowManager wm = (WindowManager) this.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -276,6 +214,7 @@ public class HistoryActivity extends AppCompatActivity {
         }
         return screenHeight;
     }
+
     private int resizeWidthAccordingToMood(String paramColor) {
         String colorIndex[] = {"#AB1A49", "#808A89", "#3135D0", "#55B617", "#D0E807"};
         int widthSet[] = {5, 4, 3, 2, 1};
@@ -289,14 +228,13 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     /**
-     * @param last this method convert duration into letter, e.g : if duration = 5 days
-     *             durationInLetter returns "five"
+     * @param last this method convert duration into letter, e.g : if duration = 5 days durationInLetter returns "five"
      * @return value
      */
     private String durationInLetter(long last) {
         String value = "";
-        String letters[] = {"Aujourd'hui", "Hier", "Avant hier", "Il y'a trois jours", "Il y'a quatre jours", "Il y'a cinq jours", "Il y'a six jours", "Il y'a une semaine"};
-        long diff[] = {0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L};
+        String letters[] = {"Hier", "Avant hier", "Il y'a trois jours", "Il y'a quatre jours", "Il y'a cinq jours", "Il y'a six jours", "Il y'a une semaine"};
+        long diff[] = {1L, 2L, 3L, 4L, 5L, 6L, 7L};
         for (int i = 0; i < diff.length; i++) {
             if (last == diff[i]) {
                 value = letters[i];

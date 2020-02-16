@@ -11,7 +11,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.Mood;
 
@@ -68,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addDataInDatabase() {
-
         SharedPreferences newData = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
         main_comment = newData.getString(MoodActivity.mComment, "");
         main_color = newData.getString(MoodActivity.mColor, "");

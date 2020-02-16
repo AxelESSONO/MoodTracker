@@ -1,35 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/linear_layout_sms"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical">
-    <!--
-        <fragment
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/fragment_to_send_sms"
-            android:name="com.axel.moodtracker.fragment.MainFragment"
-            tools:context=".controller.ContactsActivity">
-
-        </fragment>-->
-
-    <!--    <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"-->
 
     <ImageView
         android:id="@+id/image_smiley_contact"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:src="@drawable/icone_moodtracker"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/icone_moodtracker" />
 
 
     <TextView
@@ -38,9 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:text="The message to send"
         android:layout_marginBottom="20dp"
         android:gravity="center"
+        android:text="The message to send"
         android:textSize="20sp" />
 
     <TextView
@@ -49,9 +33,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:text="The phone number of the recipient"
         android:layout_marginBottom="20dp"
         android:gravity="center"
+        android:text="The phone number of the recipient"
         android:textSize="20sp" />
 
     <Button
@@ -59,29 +43,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
         android:layout_marginTop="20dp"
+        android:layout_marginRight="2dp"
+        android:background="@color/colorPrimaryDark"
         android:text="Click here to select recipient"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
         android:textSize="18dp"
-        android:background="@color/colorPrimaryDark"/>
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/send_message_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
         android:layout_marginTop="20dp"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:textSize="18dp"
+        android:layout_marginRight="2dp"
+        android:background="@color/colorPrimaryDark"
         android:text="Send message"
         android:textAllCaps="true"
-        android:background="@color/colorPrimaryDark"
-        android:visibility="invisible"/>
+        android:textColor="@android:color/white"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
 
 </LinearLayout>
 
