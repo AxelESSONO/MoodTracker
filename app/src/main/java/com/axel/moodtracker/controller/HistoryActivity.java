@@ -57,21 +57,9 @@ public class HistoryActivity extends AppCompatActivity {
 
         nodataImage = (ImageView) findViewById(R.id.no_data);
         nodataTxt = (TextView) findViewById(R.id.no_data_txt);
-        //delete = (Button) findViewById(R.id.deleteAll);
-
-        //Clean all data
-        //dbHelper.deleteAllMood();
 
         //Generate ListView from SQLite Database
         displayListView();
-
-   /*     delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dbHelper.deleteAllMood();
-                displayListView();
-            }
-        });*/
 
     }
 
@@ -105,7 +93,6 @@ public class HistoryActivity extends AppCompatActivity {
             listView.setAdapter(myCursorAdapter);
         }
     }
-
 
     //extend the SimpleCursorAdapter to create a custom class where we
     //can override the getView to change the row colors
@@ -143,7 +130,11 @@ public class HistoryActivity extends AppCompatActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             } finally {
-                textView1.setText(duration);
+                if (diff <= 7) {
+                    textView1.setText(duration);
+                } else {
+                    textView1.setText("Il y'a " + diff + " jours");
+                }
             }
 
             view.setLayoutParams(new LinearLayout.LayoutParams(resizeWidthAccordingToMood(moodColor), measureHeight() / 7));
