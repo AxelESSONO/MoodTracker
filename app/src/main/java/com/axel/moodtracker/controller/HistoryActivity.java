@@ -133,7 +133,7 @@ public class HistoryActivity extends AppCompatActivity {
                 if (diff <= 7) {
                     textView1.setText(duration);
                 } else {
-                    textView1.setText("Il y'a " + diff + " jours");
+                    textView1.setText("Il y'a " + diff + " jours"); //display duration when duration is greater than 7 days.
                 }
             }
 
