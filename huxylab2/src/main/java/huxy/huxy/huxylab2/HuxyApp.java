@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
-//import android.support.v4.content.res.ResourcesCompat;
-//import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+
+//import android.support.v4.content.res.ResourcesCompat;
+//import android.support.v7.app.AppCompatActivity;
 
 
 public class HuxyApp extends AppCompatActivity {
@@ -169,6 +170,7 @@ public class HuxyApp extends AppCompatActivity {
     /**
      * This method deals with setting the font types or styles of the toast
      * message.
+     *
      * @param activity This is context of the application.
      * @param fontType This is the path of the font. e.g (R.id.font_name)
      * @return
