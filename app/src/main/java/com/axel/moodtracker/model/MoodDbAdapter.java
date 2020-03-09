@@ -163,9 +163,7 @@ public class MoodDbAdapter {
         } else {
             return true;
         }
-
     }
-
 
     public boolean updateMood(Mood mood, int id) {
         mDbHelper = new DatabaseHelper(mContext);

@@ -1,5 +1,6 @@
 package com.axel.moodtracker.controller;
 
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -14,15 +15,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
-
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.Mood;
 import com.axel.moodtracker.model.MoodDbAdapter;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -51,10 +49,13 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
     public static final int BUNDLE_EXTRA_IMAGE = 10;
     public static final String BUNDLE_EXTRA_COLOR = "BUNDLE_COLOR";
     public SharedPreferences tmp;
+    SharedPreferences preferences;
+    SharedPreferences.Editor editor;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood);
 
@@ -91,13 +92,17 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         //moodDbAdapter = new MoodDbAdapter(this);
 
         //-----------------------------------------------------------------------------------------------------------------
-        final SharedPreferences preferences = getSharedPreferences(STOCKAGE_INFOS, MODE_PRIVATE);
-        final SharedPreferences.Editor editor = preferences.edit();
+        //final SharedPreferences
+        preferences = getSharedPreferences(STOCKAGE_INFOS, MODE_PRIVATE);
+        //final SharedPreferences.Editor
+        editor = preferences.edit();
 
 
-        myPopup.setOnClickListener(new View.OnClickListener() {
+        myPopup.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
 
                 AlertDialog.Builder mBuilder = new AlertDialog.Builder(MoodActivity.this);
                 final View mView = getLayoutInflater().inflate(R.layout.my_popup, null);
@@ -175,8 +180,8 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
     }
 
 
-    private void saveData() {
-
+    private void saveData()
+    {
         // current date
         String saveCurrentDate;
         Calendar calForDate = Calendar.getInstance();
@@ -196,25 +201,45 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         MoodDbAdapter moodDbAdapter = new MoodDbAdapter(getApplicationContext());
         Cursor cursor = moodDbAdapter.fetchAllMood();
 
-        String tmpDate = cursor.getString(cursor.getColumnIndexOrThrow("date"));
-        if (cursor.getCount() > 7) {
-            cursor.moveToFirst();
-            deleteMoodDate(tmpDate);
-            cursor.moveToFirst();
+        if (cursor != null && cursor.moveToFirst())
+        {
+            String tmpDate = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+            if (cursor.getCount() > 7) {
+                cursor.moveToLast();
+                deleteMoodDate(tmpDate);
+                cursor.moveToFirst();
+            }
 
+            Mood mood = new Mood(resourceComment, resourceColor, resourceDate);
+
+            //moodDbAdapter.dateExist(resourceDate)
+            if (!resourceDate.equals(saveCurrentDate)) {
+                //deleteMoodDate(resourceDate);
+                //deleteMoodDate(saveCurrentDate);
+                addData(mood);
+
+            }
+            else {
+            deleteMoodDate(resourceDate);
+            //deleteMoodDate(saveCurrentDate);
+            //addData(mood);
+            }
         }
 
-        Mood mood = new Mood(resourceComment, resourceColor, resourceDate);
-
-        //moodDbAdapter.dateExist(resourceDate)
-        if (!resourceDate.equals(saveCurrentDate)) {
-            deleteMoodDate(resourceDate);
-            deleteMoodDate(saveCurrentDate);
-            addData(mood);
-        } else {
-            deleteMoodDate(resourceDate);
-            deleteMoodDate(saveCurrentDate);
+        else
+        {
+            Mood mood = new Mood(resourceComment, resourceColor, resourceDate);
+            //moodDbAdapter.dateExist(resourceDate)
+            if (!resourceDate.equals(saveCurrentDate)) {
+                addData(mood);
+            }
+            else {
+                //deleteMoodDate(resourceDate);
+                //addData(mood);
+            }
         }
+
+        deleteData();
     }
 
     @Override
@@ -226,6 +251,7 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
     @Override
     protected void onResume() {
         super.onResume();
+        saveData();
     }
 
     @Override
@@ -248,7 +274,7 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
         moodDbAdapter.getRowId(date);
     }
 
-    ////--------------------------------
+    //--------------------------------
     public void addData(Mood mood) {
         mDatabaseHelper.insertSomeMood(mood);
     }
@@ -322,5 +348,14 @@ public class MoodActivity extends AppCompatActivity implements GestureDetector.O
             }
         }
         return true;
+    }
+
+    public void deleteData()
+    {
+        editor.remove(IMAGE_RESSOURCE);
+        editor.remove(IMAGE_COLOR);
+        editor.remove(IMAGE_COMMENT);
+        editor.remove(IMAGE_DATE);
+        editor.commit(); // commit changes
     }
 }

@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.model.MoodDbAdapter;
+import com.axel.moodtracker.utils.FrenchNumberToWords;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -53,14 +54,11 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
         dbHelper = new MoodDbAdapter(this);
         dbHelper.open();
-
-
+        //dbHelper.deleteAllMood();
         nodataImage = (ImageView) findViewById(R.id.no_data);
         nodataTxt = (TextView) findViewById(R.id.no_data_txt);
-
         //Generate ListView from SQLite Database
         displayListView();
-
     }
 
     @Override
@@ -84,6 +82,7 @@ public class HistoryActivity extends AppCompatActivity {
         if (cursor.getCount() == 0) {
             nodataImage.setVisibility(View.VISIBLE);
             nodataTxt.setVisibility(View.VISIBLE);
+
         } else {
             String[] columns = new String[]{MoodDbAdapter.DATE};
             final int[] to = new int[]{R.id.my_date};
@@ -97,7 +96,6 @@ public class HistoryActivity extends AppCompatActivity {
     //extend the SimpleCursorAdapter to create a custom class where we
     //can override the getView to change the row colors
     private class MyCursorAdapter extends SimpleCursorAdapter {
-
         public MyCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
             super(context, layout, c, from, to, flags);
         }
@@ -107,17 +105,14 @@ public class HistoryActivity extends AppCompatActivity {
             // ============================= get width of the screen ==========================================
             //get reference to the row
             View view = super.getView(position, convertView, parent);
-
             RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.relative_layout_info);
             TextView textView1 = (TextView) view.findViewById(R.id.my_date);
             ImageView imageView = (ImageView) view.findViewById(R.id.display_image_comment);
             ListView listView = (ListView) findViewById(R.id.listView1);
             Cursor cursor = (Cursor) listView.getItemAtPosition(position);
-
             // Get the state's capital from this row in the database.
             final String moodColor = cursor.getString(cursor.getColumnIndexOrThrow("color"));
             final String moodComment = cursor.getString(cursor.getColumnIndexOrThrow("comment"));
-
             String dateMood = null;
             DateFormat df = new SimpleDateFormat("dd MMM yyyy");
             Date date1 = new java.util.Date();
@@ -133,7 +128,8 @@ public class HistoryActivity extends AppCompatActivity {
                 if (diff <= 7) {
                     textView1.setText(duration);
                 } else {
-                    textView1.setText("Il y'a " + diff + " jours"); //display duration when duration is greater than 7 days.
+                    textView1.setText("Il y'a " + FrenchNumberToWords.convert(diff) + " jours"); //display duration when duration is greater than 7 days.
+                    //textView1.setText("Il y'a " +FrenchNumberToWords.convert(diff) + " jours"); //display duration when duration is greater than 7 days.
                 }
             }
 
@@ -146,7 +142,6 @@ public class HistoryActivity extends AppCompatActivity {
                     intent.putExtra("colorMood", moodColor);
                     startActivity(intent);
                     overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
                 }
             });
 
@@ -232,5 +227,23 @@ public class HistoryActivity extends AppCompatActivity {
             }
         }
         return value;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        displayListView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        displayListView();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        displayListView();
     }
 }
