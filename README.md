@@ -25,7 +25,7 @@ Au premier lancement de l’application MoodTracker, l’écran d’accueil affi
 L’utilisateur a le choix entre cinq humeurs possibles :
 
 <p align="center">
-  <img width="200" height="400" src="https://user-images.githubusercontent.com/49824267/76682237-79540400-65fa-11ea-9ba1-8f085665feb1.JPG">
+  <img width="700" height="300" src="https://user-images.githubusercontent.com/49824267/76682237-79540400-65fa-11ea-9ba1-8f085665feb1.JPG">
 </p>
 
 En faisant glisser le doigt sur l’écran de bas en haut l’écran affichera l’humeur suivante, qui est plus joyeuse. En faisant glisser vers le bas, l’écran affichera l’humeur précédente, qui est moins joyeuse. Chaque humeur possède une couleur de fond différente (voir le tableau ci-dessus).
