@@ -12,7 +12,7 @@ Avec MoodTracker, l’utilisateur peut mémoriser son humeur à tout moment au c
 
 Au premier lancement de l’application MoodTracker, l’écran d’accueil affiche par défaut une humeur joyeuse en plein écran symbolisée par le smiley suivant :
 
-![alt tag](https://cloud.githubusercontent.com/assets/3968618/9588666/d029268e-5029-11e5-8a0c-41ecd04207f4.png)
+![alt tag](https://user-images.githubusercontent.com/49824267/76681379-840a9b00-65f2-11ea-9b96-3f006cd428c6.jpg)
 
 Figure 1 splash screen de MoodTracker
 
