@@ -14,7 +14,9 @@ Au premier lancement de l’application MoodTracker, l’écran d’accueil affi
 
 ![alt tag]![SplashScreen](https://user-images.githubusercontent.com/49824267/76681825-4a885e80-65f7-11ea-8918-9ecb96f7a465.jpg)
 
-<img align="center" src="http://www.fillmurray.com/100/100">
+<p align="center">
+  <img width="460" height="300" src="http://www.fillmurray.com/460/300">
+</p>
 
                                           Figure 1 splash screen de MoodTracker
 
