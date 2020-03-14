@@ -108,7 +108,9 @@ Enfin, on clique sur le bouton « SEND MESSAGE » et le message est envoyé imm�
 ## III.	Les technologies utilisées
 
 Pour développer cette application, j’ai utilisé les technologies suivantes :
+
 •	Java et XML comme langages de programmation
+
 •	SQLite pour enregistrer les humeurs dans la mémoire du téléphone
 •	La librairie huxylab2 (https://github.com/huxaiphaer/HuxyApp), pour personnaliser les messages Toast 
 •	La classe ContactsContract pour accéder aux contacts du téléphone, sans oublier la permission : android.permission.READ_CONTACTS
