@@ -33,7 +33,9 @@ Figure 2: un bref aperçu de l'affichage des humeurs
 
 
 Pour mémoriser une humeur, il faut procéder de manière suivante après le lancement de l’application :
+
 •	En bas à gauche, un bouton permet d’ajouter un commentaire. Lorsque vous appuyez dessus, un popup s’affiche, avec une zone de texte et un clavier vous permettant de saisir du texte.
+
 •	En bas à droite, un bouton permet d’accéder à l’historique de vos humeurs.
 
 ![2020-03-07_15-38-48](2020-03-07_15-38-48.png)
