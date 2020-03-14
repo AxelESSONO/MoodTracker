@@ -1,5 +1,3 @@
----
-
 # FILENAME : https://openclassrooms.com/membres/Axel-ESSONO
 title: AxelCedric92
 
@@ -122,4 +120,3 @@ Pour développer cette application, j’ai utilisé les technologies suivantes :
 •	La librairie huxylab2 (https://github.com/huxaiphaer/HuxyApp), pour personnaliser les messages Toast 
 •	La classe ContactsContract pour accéder aux contacts du téléphone, sans oublier la permission : android.permission.READ_CONTACTS
 •	Telephony.gsm.SmsManager pour envoyer les sms avec la permission : android.permission.SEND_SMS.
----
