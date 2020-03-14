@@ -1,10 +1,3 @@
-# FILENAME : https://openclassrooms.com/membres/Axel-ESSONO
-title: AxelCedric92
-
-# First name or full name
-name: NDZOGOMVE ESSONO
-date: 2020-05-01 16:20
-
 # MoodTacker App
 
 ## I. Contexte
