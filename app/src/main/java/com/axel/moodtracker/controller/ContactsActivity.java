@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.telephony.gsm.SmsManager;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -16,13 +17,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.axel.moodtracker.R;
 
+import huxy.huxy.huxylab2.HuxyApp;
+
 public class ContactsActivity extends AppCompatActivity {
     private static final int RESULT_PICK_CONTACT = 1;
     private TextView phone, txtMessage;
     private Button select, sendMessageBtn;
     private ImageView imageView;
-    private String phoneNo = null;
-    private String retreiveComment = null, retreiveColor = null;
+    private String phoneNo;
+    private String retreiveComment;
+    private String retreiveColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +60,32 @@ public class ContactsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Si le numéro est supérieur à 4 caractères et que le message n'est pas vide on lance la procédure d'envoi
-                if (phoneNo.length() >= 4 && retreiveComment.length() > 0) {
-                    //Grâce à l'objet de gestion de SMS (SmsManager) que l'on récupère via la méthode static getDefault()
-                    //On envoie le SMS à l'aide de la méthode sendTextMessage
-                    SmsManager.getDefault().sendTextMessage(phoneNo, null, retreiveComment, null, null);
-                    //On efface les deux EditText
-                    phone.setText("");
-                    txtMessage.setText("");
-                    Toast.makeText(ContactsActivity.this, "Votre message a été envoyé avec succès!", Toast.LENGTH_SHORT).show();
+                if (phoneNo.length() >= 4) {
+
+                    if (retreiveComment.length() > 0){
+                        //Grâce à l'objet de gestion de SMS (SmsManager) que l'on récupère via la méthode static getDefault()
+                        //On envoie le SMS à l'aide de la méthode sendTextMessage
+                        SmsManager.getDefault().sendTextMessage(phoneNo, null, retreiveComment, null, null);
+                        //On efface les deux EditText
+                        phone.setText("");
+                        txtMessage.setText("");
+
+                        HuxyApp.successToast(ContactsActivity.this, "Votre message a été envoyé avec succès!")
+                                .setPadding(3)
+                                .setPositionAndOffSet(Gravity.CENTER,0,30);
+
+                    }else {
+                        String emptyComment = "Vous ne pouvez pas envoyer un message vide!";
+                        HuxyApp.dangerToast(ContactsActivity.this, emptyComment)
+                                .setPadding(3)
+                                .setPositionAndOffSet(Gravity.CENTER,0,0);
+                    }
+
                 } else {
                     //On affiche un petit message d'erreur dans un Toast
-                    Toast.makeText(ContactsActivity.this, "Choisissez un numéro", Toast.LENGTH_SHORT).show();
+                    HuxyApp.successToast(ContactsActivity.this, "Veuillez choisir un numéro")
+                            .setPadding(3)
+                            .setPositionAndOffSet(Gravity.CENTER,0,30);
                 }
             }
         });
@@ -89,7 +108,9 @@ public class ContactsActivity extends AppCompatActivity {
                     break;
             }
         } else {
-            //Toast.makeText (this, "Failed To pick contact", Toast.LENGTH_SHORT).show ();
+            HuxyApp.warningToast(ContactsActivity.this, "Aucun contact sélectionné!")
+                    .setPadding(3)
+                    .setPositionAndOffSet(Gravity.CENTER,0,0);
         }
     }
 

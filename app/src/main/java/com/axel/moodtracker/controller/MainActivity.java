@@ -75,6 +75,4 @@ public class MainActivity extends AppCompatActivity {
         main_color = newData.getString(MoodActivity.mColor, "");
         main_date = newData.getString(MoodActivity.mDate, "");
     }
-
-
 }

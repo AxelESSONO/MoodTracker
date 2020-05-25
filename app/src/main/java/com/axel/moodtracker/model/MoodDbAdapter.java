@@ -32,7 +32,8 @@ public class MoodDbAdapter {
 
 
     // ===================== DatabaseHelper =================================
-    private static class DatabaseHelper extends SQLiteOpenHelper {
+    private static class DatabaseHelper extends SQLiteOpenHelper
+    {
         public DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
@@ -118,23 +119,10 @@ public class MoodDbAdapter {
         return isDateExist;
     }
 
-    public boolean deleteFirstMood(String date) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        return db.delete(SQLITE_TABLE, KEY_ID + "= ?", new String[]{date}) > 0;
-
-    }
-
     public MoodDbAdapter open() throws SQLException {
         mDbHelper = new DatabaseHelper(mContext);
         mDb = mDbHelper.getWritableDatabase();
         return this;
-    }
-
-    public boolean deleteLine(String comment, String color, String date) {
-        int lineDeleted = 0;
-        //lineDeleted =  mDbHelper.deleteOneLine(comment,color,date);
-        return lineDeleted > 0;
-
     }
 
     public void close() {

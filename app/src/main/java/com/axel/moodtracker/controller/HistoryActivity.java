@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -79,9 +80,11 @@ public class HistoryActivity extends AppCompatActivity {
     private void displayListView() {
         Cursor cursor = dbHelper.fetchAllMood();
 
+
         if (cursor.getCount() == 0) {
             nodataImage.setVisibility(View.VISIBLE);
             nodataTxt.setVisibility(View.VISIBLE);
+            Toast.makeText(this, "le nombre: " + cursor.getCount(), Toast.LENGTH_SHORT).show();
 
         } else {
             String[] columns = new String[]{MoodDbAdapter.DATE};
@@ -105,10 +108,12 @@ public class HistoryActivity extends AppCompatActivity {
             // ============================= get width of the screen ==========================================
             //get reference to the row
             View view = super.getView(position, convertView, parent);
+
             RelativeLayout relativeLayout = (RelativeLayout) view.findViewById(R.id.relative_layout_info);
             TextView textView1 = (TextView) view.findViewById(R.id.my_date);
             ImageView imageView = (ImageView) view.findViewById(R.id.display_image_comment);
             ListView listView = (ListView) findViewById(R.id.listView1);
+
             Cursor cursor = (Cursor) listView.getItemAtPosition(position);
             // Get the state's capital from this row in the database.
             final String moodColor = cursor.getString(cursor.getColumnIndexOrThrow("color"));
@@ -129,7 +134,6 @@ public class HistoryActivity extends AppCompatActivity {
                     textView1.setText(duration);
                 } else {
                     textView1.setText("Il y'a " + FrenchNumberToWords.convert(diff) + " jours"); //display duration when duration is greater than 7 days.
-                    //textView1.setText("Il y'a " +FrenchNumberToWords.convert(diff) + " jours"); //display duration when duration is greater than 7 days.
                 }
             }
 
@@ -219,8 +223,8 @@ public class HistoryActivity extends AppCompatActivity {
      */
     private String durationInLetter(long last) {
         String value = "";
-        String letters[] = {"Hier", "Avant hier", "Il y'a trois jours", "Il y'a quatre jours", "Il y'a cinq jours", "Il y'a six jours", "Il y'a une semaine"};
-        long diff[] = {1L, 2L, 3L, 4L, 5L, 6L, 7L};
+        String letters[] = {"Aujourd'hui","Hier", "Avant hier", "Il y'a trois jours", "Il y'a quatre jours", "Il y'a cinq jours", "Il y'a six jours", "Il y'a une semaine"};
+        long diff[] = {0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L};
         for (int i = 0; i < diff.length; i++) {
             if (last == diff[i]) {
                 value = letters[i];
