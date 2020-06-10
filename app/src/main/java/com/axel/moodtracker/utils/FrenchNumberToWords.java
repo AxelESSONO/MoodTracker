@@ -1,6 +1,5 @@
 package com.axel.moodtracker.utils;
 
-
 import java.text.DecimalFormat;
 
 public class FrenchNumberToWords {
@@ -219,5 +218,4 @@ public class FrenchNumberToWords {
 
         return resultat;
     }
-
 }

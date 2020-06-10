@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
         int image = data.getInt(MoodActivity.IMAGE_RESSOURCE, R.drawable.d_smiley_happy);
         String resourceColor = data.getString(MoodActivity.IMAGE_COLOR, "#55B617");
 
-        addDataInDatabase();
-
         imageView.setImageResource(image);
         linearLayout.setBackgroundColor(Color.parseColor(resourceColor));
 
@@ -69,10 +67,4 @@ public class MainActivity extends AppCompatActivity {
         }, 4000);
     }
 
-    private void addDataInDatabase() {
-        SharedPreferences newData = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
-        main_comment = newData.getString(MoodActivity.mComment, "");
-        main_color = newData.getString(MoodActivity.mColor, "");
-        main_date = newData.getString(MoodActivity.mDate, "");
-    }
 }

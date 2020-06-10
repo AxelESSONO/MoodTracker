@@ -6,18 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.telephony.gsm.SmsManager;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.axel.moodtracker.R;
-
-import huxy.huxy.huxylab2.HuxyApp;
 
 public class ContactsActivity extends AppCompatActivity {
     private static final int RESULT_PICK_CONTACT = 1;
@@ -70,22 +64,22 @@ public class ContactsActivity extends AppCompatActivity {
                         phone.setText("");
                         txtMessage.setText("");
 
-                        HuxyApp.successToast(ContactsActivity.this, "Votre message a été envoyé avec succès!")
+                       /* HuxyApp.successToast(ContactsActivity.this, "Votre message a été envoyé avec succès!")
                                 .setPadding(3)
-                                .setPositionAndOffSet(Gravity.CENTER,0,30);
+                                .setPositionAndOffSet(Gravity.CENTER,0,30);*/
 
                     }else {
                         String emptyComment = "Vous ne pouvez pas envoyer un message vide!";
-                        HuxyApp.dangerToast(ContactsActivity.this, emptyComment)
+                        /*HuxyApp.dangerToast(ContactsActivity.this, emptyComment)
                                 .setPadding(3)
-                                .setPositionAndOffSet(Gravity.CENTER,0,0);
+                                .setPositionAndOffSet(Gravity.CENTER,0,0);*/
                     }
 
                 } else {
                     //On affiche un petit message d'erreur dans un Toast
-                    HuxyApp.successToast(ContactsActivity.this, "Veuillez choisir un numéro")
+                   /* HuxyApp.successToast(ContactsActivity.this, "Veuillez choisir un numéro")
                             .setPadding(3)
-                            .setPositionAndOffSet(Gravity.CENTER,0,30);
+                            .setPositionAndOffSet(Gravity.CENTER,0,30);*/
                 }
             }
         });
@@ -101,6 +95,7 @@ public class ContactsActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case RESULT_PICK_CONTACT:
@@ -108,9 +103,9 @@ public class ContactsActivity extends AppCompatActivity {
                     break;
             }
         } else {
-            HuxyApp.warningToast(ContactsActivity.this, "Aucun contact sélectionné!")
+           /* HuxyApp.warningToast(ContactsActivity.this, "Aucun contact sélectionné!")
                     .setPadding(3)
-                    .setPositionAndOffSet(Gravity.CENTER,0,0);
+                    .setPositionAndOffSet(Gravity.CENTER,0,0);*/
         }
     }
 
