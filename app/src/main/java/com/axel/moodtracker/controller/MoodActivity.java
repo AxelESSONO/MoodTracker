@@ -9,46 +9,34 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.ViewPager.VerticalViewPager;
 import com.axel.moodtracker.adapter.PageAdapter;
-import com.axel.moodtracker.fragment.MoodFragment;
 import com.axel.moodtracker.model.Mood;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MoodActivity extends AppCompatActivity implements MoodFragment.PassDataInterface {
+public class MoodActivity extends AppCompatActivity {
 
-    private static final String PREF_DATA_FRAGMENT = "PREF_DATA_FRAGMENT";
     private FloatingActionButton addComment, historyMood;
-    public static final String KEY_POSITION = "position";
-    public static final String KEY_COLOR = "color";
     public static final String PREF_DATA = "PREF_DATA";
     public static final String IMAGE_RESSOURCE = "IMAGE RESSOURCE";
     public static final String IMAGE_COLOR = "IMAGE COLOR";
-    public static final String POSITION = "POSITION";
-
-
     public static final String STOCKAGE_INFOS = "data";
-
     FragmentManager manager;
-    FragmentTransaction transaction;
-
     private ArrayList<Mood> mMoodList;
-    private int mColor;
-    private int mPosition;
-    private int mImage;
     VerticalViewPager pager;
 
     @Override
@@ -63,7 +51,11 @@ public class MoodActivity extends AppCompatActivity implements MoodFragment.Pass
         // 1 - Get ViewPager from layout
         pager = (VerticalViewPager) findViewById(R.id.activity_main_viewpager);
         //3 - Configure ViewPager
-        configureViewPager();
+
+        manager = getSupportFragmentManager();
+        // 2 - Set Adapter PageAdapter and glue it together
+        PagerAdapter pagerAdapter = new PageAdapter(manager, getResources().getIntArray(R.array.colorPagesViewPager));
+        configureViewPager(manager, pagerAdapter);
 
         // To display popup where the the comment will be written
         addComment.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +72,6 @@ public class MoodActivity extends AppCompatActivity implements MoodFragment.Pass
                 startActivity(historyIntent);
             }
         });
-
     }
 
     // Display popup
@@ -94,6 +85,7 @@ public class MoodActivity extends AppCompatActivity implements MoodFragment.Pass
         TextView mTitle = (TextView) mView.findViewById(R.id.title);
         Button mValidateBtn = (Button) mView.findViewById(R.id.validate);
         Button mCancelBtn = (Button) mView.findViewById(R.id.cancel);
+
         // When user cancel to write comment
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,32 +101,30 @@ public class MoodActivity extends AppCompatActivity implements MoodFragment.Pass
 
                 EditText mComent = (EditText) mView.findViewById(R.id.commentEditText);
                 String recentComment = mComent.getText().toString();
-                checkComment(recentComment, mComent);
-
-                Toast.makeText(MoodActivity.this, recentComment, Toast.LENGTH_SHORT).show();
-
+                checkComment(recentComment, mComent, pager.getCurrentItem());
+                Toast.makeText(MoodActivity.this, "La page numero: " + pager.getCurrentItem(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     // Check if comment is empty
-    private void checkComment(String recentComment, EditText mComent) {
+    private void checkComment(String recentComment, EditText mComent, int currentItem) {
         if (recentComment.equals("")) {
             mComent.setError(getResources().getString(R.string.no_comment_error));
         } else {
-            saveComment(recentComment, mComent);
+            saveComment(recentComment, mComent, currentItem);
         }
     }
 
     // Save comment
-    private void saveComment(String recentComment, EditText mComent) {
-        retreiveColorMoodDrawable(recentComment, mComent);
+    private void saveComment(String recentComment, EditText mComent, int currentItem) {
+        retreiveColorMoodDrawable(recentComment, currentItem);
         Toast.makeText(this, recentComment, Toast.LENGTH_SHORT).show();
         mComent.setText("");
         mComent.setHint(getResources().getString(R.string.please_write_a_comment_here));
     }
 
-    private void retreiveColorMoodDrawable(String recentComment, EditText mComent) {
+    private void retreiveColorMoodDrawable(String recentComment, int currentItem) {
 
         // Get date and time
         final String saveCurrentDate;
@@ -142,37 +132,14 @@ public class MoodActivity extends AppCompatActivity implements MoodFragment.Pass
         SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
         saveCurrentDate = currentDate.format(calForDate.getTime());
 
-        // Get Color
-        //mColor = getColor();
-
-
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(PREF_DATA_FRAGMENT, MODE_PRIVATE);
-        int pColor = pref.getInt("Couleur", -11160041);
-        int pPosition = pref.getInt("Position", 3);
-
         load();
-        insertItem(recentComment, mColor, saveCurrentDate);
+        insertItem(recentComment, getColorByPosition(currentItem), saveCurrentDate);
         saveData();
-
     }
 
-    private int getColor() {
-        SharedPreferences pref = getApplicationContext().getSharedPreferences(PREF_DATA, MODE_PRIVATE);
-        int pColor = pref.getInt(IMAGE_COLOR, -11160041);
-        return pColor;
-    }
-
-    private void saveMood(String recentComment, int resourceColor, String saveCurrentDate) {
-
-        mMoodList = new ArrayList<>();
-
-        mMoodList.add(new Mood(recentComment, resourceColor, saveCurrentDate));
-        SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(mMoodList);
-        editor.putString("mood list", json);
-        editor.apply();
+    private int getColorByPosition(int currentItem) {
+        int color = getResources().getIntArray(R.array.colorPagesViewPager)[currentItem];
+        return color;
     }
 
     private void load() {
@@ -189,7 +156,6 @@ public class MoodActivity extends AppCompatActivity implements MoodFragment.Pass
     }
 
     private void saveData() {
-
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
@@ -202,28 +168,8 @@ public class MoodActivity extends AppCompatActivity implements MoodFragment.Pass
         mMoodList.add(new Mood(mComment, color, mDate));
     }
 
-    private void configureViewPager() {
-
-        manager = getSupportFragmentManager();
-        // 2 - Set Adapter PageAdapter and glue it together
-        PagerAdapter pagerAdapter = new PageAdapter(manager, getResources().getIntArray(R.array.colorPagesViewPager));
+    private void configureViewPager(FragmentManager manager, PagerAdapter pagerAdapter) {
         pager.setAdapter(pagerAdapter);
         pager.setCurrentItem(3); // Setting default MoodFragment
-        pager.getCurrentItem();
-    }
-
-    @Override
-    public void onDataReceived(int color, int position) {
-
-        saveDataPref(color, position);
-    }
-
-    private void saveDataPref(int color, int position) {
-        mColor = color;
-        mPosition = position;
-        SharedPreferences datPreferences = getSharedPreferences(PREF_DATA_FRAGMENT, MODE_PRIVATE);
-        SharedPreferences.Editor dataEditor = datPreferences.edit();
-        dataEditor.putInt("Couleur", mColor);
-        dataEditor.putInt("Position", mPosition);
     }
 }
