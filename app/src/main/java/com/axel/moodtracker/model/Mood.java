@@ -1,11 +1,12 @@
 package com.axel.moodtracker.model;
 
 public class Mood {
+
     private String mComment = null;
-    private String mColor = null;
+    private int mColor;
     private String mDate = null;
 
-    public Mood(String mComment, String mColor, String mDate) {
+    public Mood(String mComment, int mColor, String mDate) {
         this.mComment = mComment;
         this.mColor = mColor;
         this.mDate = mDate;
@@ -19,11 +20,11 @@ public class Mood {
         this.mComment = mComment;
     }
 
-    public String getColor() {
+    public int getColor() {
         return mColor;
     }
 
-    public void setColor(String mColor) {
+    public void setColor(int mColor) {
         this.mColor = mColor;
     }
 
@@ -34,4 +35,6 @@ public class Mood {
     public void setDate(String mDate) {
         this.mDate = mDate;
     }
+
+
 }
