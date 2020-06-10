@@ -1,347 +1,229 @@
 package com.axel.moodtracker.controller;
 
-
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GestureDetectorCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.PagerAdapter;
 
 import com.axel.moodtracker.R;
+import com.axel.moodtracker.ViewPager.VerticalViewPager;
+import com.axel.moodtracker.adapter.PageAdapter;
+import com.axel.moodtracker.fragment.MoodFragment;
 import com.axel.moodtracker.model.Mood;
-import com.axel.moodtracker.model.MoodDbAdapter;
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MoodActivity extends AppCompatActivity implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+public class MoodActivity extends AppCompatActivity implements MoodFragment.PassDataInterface {
 
-    public static final String IMAGE_RESSOURCE = "imageColorToDisplay";
-    public static final String IMAGE_COLOR = "imageColor";
-    public static final String IMAGE_COMMENT = "imageComment";
-    public static final String IMAGE_DATE = "imageDate";
+    private static final String PREF_DATA_FRAGMENT = "PREF_DATA_FRAGMENT";
+    private FloatingActionButton addComment, historyMood;
+    public static final String KEY_POSITION = "position";
+    public static final String KEY_COLOR = "color";
+    public static final String PREF_DATA = "PREF_DATA";
+    public static final String IMAGE_RESSOURCE = "IMAGE RESSOURCE";
+    public static final String IMAGE_COLOR = "IMAGE COLOR";
+    public static final String POSITION = "POSITION";
+
 
     public static final String STOCKAGE_INFOS = "data";
-    private ImageView mImage;
-    private MoodActivity moodActivity;
-    private GestureDetectorCompat mDetector;
-    private int mImageRessource[] = {R.drawable.a_smiley_disappointed,
-            R.drawable.b_smiley_sad,
-            R.drawable.c_smiley_normal,
-            R.drawable.d_smiley_happy,
-            R.drawable.e_smiley_super_happy};
-    private int i = 3;
-    private String resourceColor[] = {"#AB1A49", "#808A89", "#3135D0", "#55B617", "#D0E807"};
-    private RelativeLayout relativeLayoutMood;
-    public static String mComment = null, mColor = null, mDate = null;
 
-    private MoodDbAdapter mDatabaseHelper;
-    public static final int BUNDLE_EXTRA_IMAGE = 10;
-    public static final String BUNDLE_EXTRA_COLOR = "BUNDLE_COLOR";
-    public SharedPreferences tmp;
-    SharedPreferences preferences;
-    SharedPreferences.Editor editor;
+    FragmentManager manager;
+    FragmentTransaction transaction;
 
+    private ArrayList<Mood> mMoodList;
+    private int mColor;
+    private int mPosition;
+    private int mImage;
+    VerticalViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_mood);
 
-        mDatabaseHelper = new MoodDbAdapter(this);
-        //dbHelper = new MoodDbAdapter(this);
-        mDatabaseHelper.open();
+        addComment = (FloatingActionButton) findViewById(R.id.add_comment);
+        historyMood = (FloatingActionButton) findViewById(R.id.go_to_history);
 
-        this.moodActivity = this;
-        // the popup to write the comment
-        final ImageView myPopup = findViewById(R.id.add_comment_button);
-        //get ImageView
-        mImage = (ImageView) findViewById(R.id.list_picture);
+        // 1 - Get ViewPager from layout
+        pager = (VerticalViewPager) findViewById(R.id.activity_main_viewpager);
+        //3 - Configure ViewPager
+        configureViewPager();
 
-        // Instantiate the gesture detector with the
-        // application context and an implementation of
-        mDetector = new GestureDetectorCompat(this, this);
-        relativeLayoutMood = (RelativeLayout) findViewById(R.id.relative_layout_mood);
-        mImage = (ImageView) findViewById(R.id.list_picture);
-
-        SharedPreferences data = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
-        int image = data.getInt(MoodActivity.IMAGE_RESSOURCE, R.drawable.d_smiley_happy);
-        String ColorResource = data.getString(MoodActivity.IMAGE_COLOR, "#55B617");
-
-        mImage.setImageResource(image);
-        //  mImage.setImageResource(mImageRessource[i]);
-        //relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[i]));
-        relativeLayoutMood.setBackgroundColor(Color.parseColor(ColorResource));
-
-
-        // Set the gesture detector as the double tap
-        // listener.
-        mDetector.setOnDoubleTapListener(this);
-        //mDatabaseHelper = new MoodDbAdapter(this);
-        //moodDbAdapter = new MoodDbAdapter(this);
-
-        //-----------------------------------------------------------------------------------------------------------------
-        //final SharedPreferences
-        preferences = getSharedPreferences(STOCKAGE_INFOS, MODE_PRIVATE);
-        //final SharedPreferences.Editor
-        editor = preferences.edit();
-
-
-        myPopup.setOnClickListener(new View.OnClickListener() {
+        // To display popup where the the comment will be written
+        addComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MoodActivity.this);
-                final View mView = getLayoutInflater().inflate(R.layout.my_popup, null);
-                mBuilder.setView(mView);
-                final AlertDialog dialog = mBuilder.create();
-                dialog.show();
-                final EditText mComent = (EditText) mView.findViewById(R.id.subTitle);
-                TextView mTitle = (TextView) mView.findViewById(R.id.title);
-                Button mValidateBtn = (Button) mView.findViewById(R.id.validateButton);
-                Button mCancelBtn = (Button) mView.findViewById(R.id.cancelButton);
-                final String mColor = resourceColor[i]; // Retreive color
-                final String mDate;
-
-                // Clicking on Button Validate
-                mValidateBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String newComment = mComent.getText().toString();
-                        String newColor = mColor;
-
-                        // get date and time
-                        final String saveCurrentDate;
-                        Calendar calForDate = Calendar.getInstance();
-                        SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
-                        saveCurrentDate = currentDate.format(calForDate.getTime());
-                        Mood mood = new Mood(newComment, newColor, saveCurrentDate);
-
-                        // Check if field is not empty
-                        if (!(mComent.getText().toString()).isEmpty()) {
-                            mComent.setText("");
-                            editor.putInt(IMAGE_RESSOURCE, mImageRessource[i]);
-                            editor.putString(IMAGE_COLOR, mood.getColor());
-                            editor.putString(IMAGE_COMMENT, mood.getComment());
-                            editor.putString(IMAGE_DATE, mood.getDate());
-                            editor.commit();
-                            //saveData();
-
-                            deleteMoodByData();
-                            addData(mood);
-                            //deleteMoodDate(mood.getDate());
-                            dialog.dismiss();
-                            Toast.makeText(MoodActivity.this, "Mood saved successfully", Toast.LENGTH_SHORT).show();
-
-                        } else {
-
-                            mComent.setText("");
-                            editor.putInt(IMAGE_RESSOURCE, mImageRessource[i]);
-                            editor.putString(IMAGE_COLOR, mood.getColor());
-                            editor.putString(IMAGE_COMMENT, mood.getComment());
-                            editor.putString(IMAGE_DATE, mood.getDate());
-                            editor.commit();
-                            deleteMoodByData();
-                            addData(mood);
-                            dialog.dismiss();
-                            Toast.makeText(MoodActivity.this, "Mood saved without comment", Toast.LENGTH_SHORT).show();
-
-
-                        }
-
-                    }
-                });
-                //To dismiss writing comment
-                mCancelBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
+                showPopup();
             }
         });
-        //----------------------------------------------------------------------------------------------------------------
 
-        //To go to History page
-        final ImageView goToHistoryViewBtn = findViewById(R.id.add_history_button);
-        goToHistoryViewBtn.setOnClickListener(new View.OnClickListener() {
+        historyMood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent historyIntent = new Intent(MoodActivity.this, HistoryActivity.class);
+                startActivity(historyIntent);
+            }
+        });
+
+    }
+
+    // Display popup
+    private void showPopup() {
+
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(MoodActivity.this);
+        final View mView = getLayoutInflater().inflate(R.layout.comment_popup_layout, null);
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        dialog.show();  // Dialog popup is showing
+        TextView mTitle = (TextView) mView.findViewById(R.id.title);
+        Button mValidateBtn = (Button) mView.findViewById(R.id.validate);
+        Button mCancelBtn = (Button) mView.findViewById(R.id.cancel);
+        // When user cancel to write comment
+        mCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        // When User validate comment
+        mValidateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                SharedPreferences data = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
-                Intent historyActivity = new Intent(MoodActivity.this, HistoryActivity.class);
+                EditText mComent = (EditText) mView.findViewById(R.id.commentEditText);
+                String recentComment = mComent.getText().toString();
+                checkComment(recentComment, mComent);
 
-                startActivity(historyActivity);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                Toast.makeText(MoodActivity.this, recentComment, Toast.LENGTH_SHORT).show();
+
             }
         });
     }
 
+    // Check if comment is empty
+    private void checkComment(String recentComment, EditText mComent) {
+        if (recentComment.equals("")) {
+            mComent.setError(getResources().getString(R.string.no_comment_error));
+        } else {
+            saveComment(recentComment, mComent);
+        }
+    }
 
-    private void deleteMoodByData() {
-        // current date
+    // Save comment
+    private void saveComment(String recentComment, EditText mComent) {
+        retreiveColorMoodDrawable(recentComment, mComent);
+        Toast.makeText(this, recentComment, Toast.LENGTH_SHORT).show();
+        mComent.setText("");
+        mComent.setHint(getResources().getString(R.string.please_write_a_comment_here));
+    }
+
+    private void retreiveColorMoodDrawable(String recentComment, EditText mComent) {
+
+        // Get date and time
+        final String saveCurrentDate;
         Calendar calForDate = Calendar.getInstance();
         SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
-        String saveCurrentDate = currentDate.format(calForDate.getTime());
-        // end current date
+        saveCurrentDate = currentDate.format(calForDate.getTime());
 
-        SharedPreferences data = getApplicationContext().getSharedPreferences(MoodActivity.STOCKAGE_INFOS, MODE_PRIVATE);
-        int image = data.getInt(MoodActivity.IMAGE_RESSOURCE, R.drawable.d_smiley_happy);
-        String resourceColor = data.getString(MoodActivity.IMAGE_COLOR, "#55B617");
-        mImage.setImageResource(image);
-        relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor));
-        MoodDbAdapter moodDbAdapter = new MoodDbAdapter(getApplicationContext());
-        Cursor cursor = moodDbAdapter.fetchAllMood();
-        int indexDate = cursor.getColumnIndex("date");
-        int count = 0;
-        String colDate;
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                colDate = cursor.getString(indexDate);
-                if (colDate.equals(saveCurrentDate)) {
-                    deleteMoodDate(colDate);
-                } else {
-                }
-                count = count + 1;
-            } while (cursor.moveToNext());
+        // Get Color
+        //mColor = getColor();
 
-            int cursorCount = 7;
-            if (cursor.getCount() > 7){
-                do {
-                    colDate = cursor.getString(indexDate);
-                    deleteMoodDate(colDate);
-                    cursorCount = cursorCount + 1;
-                } while (cursor.moveToNext());
-            }
+
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(PREF_DATA_FRAGMENT, MODE_PRIVATE);
+        int pColor = pref.getInt("Couleur", -11160041);
+        int pPosition = pref.getInt("Position", 3);
+
+        load();
+        insertItem(recentComment, mColor, saveCurrentDate);
+        saveData();
+
+    }
+
+    private int getColor() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences(PREF_DATA, MODE_PRIVATE);
+        int pColor = pref.getInt(IMAGE_COLOR, -11160041);
+        return pColor;
+    }
+
+    private void saveMood(String recentComment, int resourceColor, String saveCurrentDate) {
+
+        mMoodList = new ArrayList<>();
+
+        mMoodList.add(new Mood(recentComment, resourceColor, saveCurrentDate));
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(mMoodList);
+        editor.putString("mood list", json);
+        editor.apply();
+    }
+
+    private void load() {
+
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("mood list", null);
+        Type type = new TypeToken<ArrayList<Mood>>() {
+        }.getType();
+        mMoodList = gson.fromJson(json, type);
+        if (mMoodList == null) {
+            mMoodList = new ArrayList<>();
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //saveData();
+    private void saveData() {
+
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(mMoodList);
+        editor.putString("mood list", json);
+        editor.apply();
+    }
+
+    private void insertItem(String mComment, int color, String mDate) {
+        mMoodList.add(new Mood(mComment, color, mDate));
+    }
+
+    private void configureViewPager() {
+
+        manager = getSupportFragmentManager();
+        // 2 - Set Adapter PageAdapter and glue it together
+        PagerAdapter pagerAdapter = new PageAdapter(manager, getResources().getIntArray(R.array.colorPagesViewPager));
+        pager.setAdapter(pagerAdapter);
+        pager.setCurrentItem(3); // Setting default MoodFragment
+        pager.getCurrentItem();
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        //saveData();
+    public void onDataReceived(int color, int position) {
+
+        saveDataPref(color, position);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    private int loadSmileyImage(String color) {
-        int idImage = 0;
-        for (int i = 0; i < resourceColor.length; i++) {
-            if (color.equals(resourceColor[i])) {
-                idImage = mImageRessource[i];
-            }
-        }
-        return idImage;
-    }
-
-    private void deleteMoodDate(String date) {
-        MoodDbAdapter moodDbAdapter = new MoodDbAdapter(MoodActivity.this);
-        moodDbAdapter.getRowId(date);
-    }
-
-    //--------------------------------
-    public void addData(Mood mood) {
-        mDatabaseHelper.insertSomeMood(mood);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (this.mDetector.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        if (velocityY < 0) {
-            if (i == 4) {
-                mImage.setImageResource(mImageRessource[4]);
-                relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[4]));
-            } else if (i < 4) {
-                mImage.setImageResource(mImageRessource[i + 1]);
-                relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[i + 1]));
-                i = i + 1;
-            }
-        }
-        if (velocityY > 0) {
-            if (i == 0) {
-                mImage.setImageResource(mImageRessource[0]);
-                relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[0]));
-            } else if (i > 0) {
-                mImage.setImageResource(mImageRessource[i - 1]);
-                relativeLayoutMood.setBackgroundColor(Color.parseColor(resourceColor[i - 1]));
-                i = i - 1;
-            }
-        }
-        return true;
-    }
-
-    public void deleteData() {
-        editor.remove(IMAGE_RESSOURCE);
-        editor.remove(IMAGE_COLOR);
-        editor.remove(IMAGE_COMMENT);
-        editor.remove(IMAGE_DATE);
-        editor.commit(); // commit changes
+    private void saveDataPref(int color, int position) {
+        mColor = color;
+        mPosition = position;
+        SharedPreferences datPreferences = getSharedPreferences(PREF_DATA_FRAGMENT, MODE_PRIVATE);
+        SharedPreferences.Editor dataEditor = datPreferences.edit();
+        dataEditor.putInt("Couleur", mColor);
+        dataEditor.putInt("Position", mPosition);
     }
 }
