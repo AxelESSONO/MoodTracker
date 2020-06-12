@@ -5,11 +5,13 @@ public class Mood {
     private String mComment = null;
     private int mColor;
     private String mDate = null;
+    private int mImage;
 
-    public Mood(String mComment, int mColor, String mDate) {
+    public Mood(String mComment, int mColor, String mDate, int mImage) {
         this.mComment = mComment;
         this.mColor = mColor;
         this.mDate = mDate;
+        this.mImage = mImage;
     }
 
     public String getComment() {
@@ -36,5 +38,12 @@ public class Mood {
         this.mDate = mDate;
     }
 
+    public int getmImage() {
+        return mImage;
+    }
+
+    public void setmImage(int mImage) {
+        this.mImage = mImage;
+    }
 
 }
