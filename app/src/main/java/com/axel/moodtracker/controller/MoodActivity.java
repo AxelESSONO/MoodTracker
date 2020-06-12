@@ -35,6 +35,14 @@ public class MoodActivity extends AppCompatActivity {
     public static final String IMAGE_RESSOURCE = "IMAGE RESSOURCE";
     public static final String IMAGE_COLOR = "IMAGE COLOR";
     public static final String STOCKAGE_INFOS = "data";
+
+    private int mImageRessource[] = {R.drawable.a_smiley_disappointed,
+            R.drawable.b_smiley_sad,
+            R.drawable.c_smiley_normal,
+            R.drawable.d_smiley_happy,
+            R.drawable.e_smiley_super_happy};
+
+
     FragmentManager manager;
     private ArrayList<Mood> mMoodList;
     VerticalViewPager pager;
@@ -102,7 +110,7 @@ public class MoodActivity extends AppCompatActivity {
                 EditText mComent = (EditText) mView.findViewById(R.id.commentEditText);
                 String recentComment = mComent.getText().toString();
                 checkComment(recentComment, mComent, pager.getCurrentItem());
-                Toast.makeText(MoodActivity.this, "La page numero: " + pager.getCurrentItem(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MoodActivity.this, "Your mood has been saved successfully", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -133,13 +141,18 @@ public class MoodActivity extends AppCompatActivity {
         saveCurrentDate = currentDate.format(calForDate.getTime());
 
         load();
-        insertItem(recentComment, getColorByPosition(currentItem), saveCurrentDate);
+        insertItem(recentComment, getColorByPosition(currentItem), saveCurrentDate, getMoodImageByPosition(currentItem));
         saveData();
     }
 
     private int getColorByPosition(int currentItem) {
         int color = getResources().getIntArray(R.array.colorPagesViewPager)[currentItem];
         return color;
+    }
+
+    private int getMoodImageByPosition(int currentItem){
+        int image = mImageRessource[currentItem];
+        return image;
     }
 
     private void load() {
@@ -164,8 +177,8 @@ public class MoodActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private void insertItem(String mComment, int color, String mDate) {
-        mMoodList.add(new Mood(mComment, color, mDate));
+    private void insertItem(String mComment, int color, String mDate, int mImage) {
+        mMoodList.add(new Mood(mComment, color, mDate, mImage));
     }
 
     private void configureViewPager(FragmentManager manager, PagerAdapter pagerAdapter) {

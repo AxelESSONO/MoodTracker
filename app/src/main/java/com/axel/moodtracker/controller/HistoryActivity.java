@@ -27,15 +27,9 @@ public class HistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
 
-        getData();
-
-    }
-
-    private void getData() {
         load();
         initRecyclerView();
     }
-
 
     private void load() {
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_DATA, MODE_PRIVATE);
@@ -49,9 +43,7 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
-
     private void initRecyclerView() {
-
         mRecyclerView = findViewById(R.id.recycler_mood);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this);
@@ -59,5 +51,4 @@ public class HistoryActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
     }
-
 }
