@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,34 +7,29 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackgroundGreen"
     android:orientation="vertical"
+    android:gravity="center"
     tools:context=".controller.MainActivity">
 
     <ImageView
         android:id="@+id/smiley_icon"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:clickable="true" />
+        android:src="@drawable/d_smiley_happy"/>
 
     <TextView
         android:id="@+id/name_of_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
         android:text="MoodTracker App"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:textSize="30dp"
+        android:textSize="48dp"
         android:textStyle="bold" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:indeterminateDrawable="@drawable/progress"
@@ -45,7 +39,6 @@
         android:id="@+id/version_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:text="Version 1.0"

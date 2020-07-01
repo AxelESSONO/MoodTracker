@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toast_layout_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dip"
+    android:background="@drawable/toast_backgroung">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/image_toast"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:src="@drawable/icone_moodtracker"
+        android:layout_toLeftOf="@id/text_toast"
+        app:civ_border_color="@android:color/white"
+        app:civ_border_width="2dp"/>
+
+    <TextView
+        android:id="@+id/text_toast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:text="My message should be written here"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:textSize="15dp"/>
+
+</RelativeLayout>

@@ -21,5 +21,13 @@
     <string name="comment_title_popup">Your comment</string>
     <string name="no_comment_error">We cannot save a empty comment!</string>
     <string name="please_write_a_comment_here">Please write a comment here ...</string>
+    <string name="success_save">Your mood has been saved successfully</string>
+    <string name="mood_saved_tomorrow">Your mood will be saved tomorrow</string>
+    <string name="mood_saved_yesterday">Yesterday\'s mood has just been successfully recorded!</string>
+    <string name="no_mood_saved_yesterday">No mood saved yesterday</string>
+    <string name="successMessage">Votre message a été envoyé avec succès!</string>
+    <string name="no_send_empty_message">Vous ne pouvez pas envoyer un message vide!</string>
+    <string name="choose_number_phone">Veuillez choisir un numéro</string>
+    <string name="no_contact_selected">Aucun contact sélectionné!</string>
 
 </resources>

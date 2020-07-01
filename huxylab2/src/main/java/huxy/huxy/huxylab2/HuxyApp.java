@@ -109,7 +109,7 @@ public class HuxyApp extends AppCompatActivity {
      * @param textColorCode       This is the text color.
      * @return Returns the instance.
      */
-    public static HuxyApp customToast(Activity activity, String message, String backgroundColorCode, String textColorCode) {
+    public static HuxyApp customToast(Activity activity, String message, String backgroundColorCode, int textColorCode) {
 
         inflater = activity.getLayoutInflater();
         View layout = inflater.inflate(R.layout.lib_activity_main,
@@ -117,7 +117,13 @@ public class HuxyApp extends AppCompatActivity {
 
         text = layout.findViewById(R.id.header1);
         text.setText(message);
-        text.setTextColor(Color.parseColor(textColorCode));
+
+        //text.setTextColor(Color.parseColor(textColorCode));
+        //text.setBackgroundColor(textColorCode);
+
+        text.setTextColor(textColorCode);
+
+
         layout.setBackgroundColor(Color.parseColor(backgroundColorCode));
 
         toast = new Toast(activity);

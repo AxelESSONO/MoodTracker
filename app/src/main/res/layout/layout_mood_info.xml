@@ -16,7 +16,8 @@
         android:layout_marginTop="15dp"
         android:layout_toLeftOf="@id/display_image_comment"
         android:text="TextView"
-        android:textStyle="bold" />
+        android:maxLines="4"
+        android:textStyle="bold"/>
 
     <ImageView
         android:id="@+id/display_image_comment"

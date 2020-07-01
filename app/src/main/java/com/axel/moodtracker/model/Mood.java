@@ -6,12 +6,15 @@ public class Mood {
     private int mColor;
     private String mDate = null;
     private int mImage;
+    private int mMoodPosition;
 
-    public Mood(String mComment, int mColor, String mDate, int mImage) {
+    public Mood(String mComment, int mColor, String mDate, int mImage, int mMoodPosition) {
         this.mComment = mComment;
         this.mColor = mColor;
         this.mDate = mDate;
         this.mImage = mImage;
+        this.mMoodPosition = mMoodPosition;
+
     }
 
     public String getComment() {
@@ -46,4 +49,11 @@ public class Mood {
         this.mImage = mImage;
     }
 
+    public int getmMoodPosition() {
+        return mMoodPosition;
+    }
+
+    public void setmMoodPosition(int mMoodPosition) {
+        this.mMoodPosition = mMoodPosition;
+    }
 }

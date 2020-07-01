@@ -11,6 +11,8 @@
     <color name="colorBackgroundGreen">#55B617</color>
     <color name="colorBackgroundYellow">#D0E807</color>
 
+    <color name="colorWhite">#FFFFFF</color>
+
     <color name="float_color">#2D052B</color>
 
     <!-- Array of colors that will be used by ViewPager as background colors -->
