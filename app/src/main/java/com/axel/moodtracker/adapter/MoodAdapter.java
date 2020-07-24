@@ -52,8 +52,13 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
 
         holder.relativeLayout.setBackgroundColor(moodList.get(position).getColor());
         final String comment = String.valueOf(moodList.get(position).getComment());
-        setRelativeLayout(holder, position);
+        if(comment.equals("")) {
+            holder.commentImg.setVisibility(View.INVISIBLE);
+        }else {
+            holder.commentImg.setVisibility(View.VISIBLE);
+        }
 
+        setRelativeLayout(holder, position);
         holder.commentImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +75,11 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                goToContactsActivity(context, position);
+                if (comment.isEmpty()) {
+                    holder.commentImg.setVisibility(View.INVISIBLE);
+                } else {
+                    goToContactsActivity(context, position);
+                }
             }
         });
         setDuration(holder, position, moodList);
@@ -99,8 +108,10 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
                 holder.durationTxt.setText("Avant hier");
             } else if (diff >= 3 && diff < 6) {
                 holder.durationTxt.setText("Il y'a " + FrenchNumberToWords.convert(diff) + " jours");
-            } else {
+            } else if (diff == 7) {
                 holder.durationTxt.setText("Il y'a une semaine");
+            } else {
+                holder.durationTxt.setText("Il y'a " + FrenchNumberToWords.convert(diff) + " jours");
             }
         }
     }
@@ -117,18 +128,11 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
         Point size = new Point();
         display.getSize(size);
         int width = (size.x) / 5;
-
-        //width = fitWidth(matchParent, position, width);
-
         width = width * (1 + moodList.get(position).getmMoodPosition());
-
         return width;
     }
 
     private void goToContactsActivity(Context context, int position) {
-
-        //String comment = mood.getComment();
-        //int color = mood.getColor();
         Intent contactIntent = new Intent(context, ContactsActivity.class);
         contactIntent.putExtra(Constants.MY_COMMENT, moodList.get(position).getComment());
         contactIntent.putExtra(Constants.COLOR_MOOD, moodList.get(position).getColor());

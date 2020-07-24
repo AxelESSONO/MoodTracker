@@ -22,13 +22,11 @@ import com.axel.moodtracker.R;
 import com.axel.moodtracker.ViewPager.VerticalViewPager;
 import com.axel.moodtracker.adapter.PageAdapter;
 import com.axel.moodtracker.alarm.AlertReceiver;
-import com.axel.moodtracker.model.Mood;
 import com.axel.moodtracker.utils.Constants;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.muddzdev.styleabletoast.StyleableToast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MoodActivity extends AppCompatActivity {
@@ -36,8 +34,7 @@ public class MoodActivity extends AppCompatActivity {
     private FloatingActionButton addComment, historyMood;
     private FragmentManager manager;
     private VerticalViewPager pager;
-    private Boolean isMoodSavedYesterday = false;
-    private ArrayList<Mood> moodArrayList;
+    private String recentComment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +93,7 @@ public class MoodActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 EditText mComent = (EditText) mView.findViewById(R.id.commentEditText);
-                String recentComment = mComent.getText().toString();
+                recentComment = mComent.getText().toString();
                 checkComment(recentComment, mComent, pager.getCurrentItem());
             }
         });
@@ -164,9 +161,8 @@ public class MoodActivity extends AppCompatActivity {
     }
 
     private void startAlarm(Calendar calendar, String recentComment, int colorByPosition, String saveCurrentDate, int moodImageByPosition, int currentItem) {
-        isMoodSavedYesterday = true;
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
         Bundle bundle = new Bundle();
         bundle.putString(Constants.RECENT_COMMENT, recentComment);
@@ -177,7 +173,7 @@ public class MoodActivity extends AppCompatActivity {
         intent.putExtras(bundle);
 
         PendingIntent sender = PendingIntent.getBroadcast(this, 2, intent, 0);
-
+        alarmManager.cancel(sender);
         if (alarmManager != null) {
             if (calendar.after(Calendar.getInstance())) {
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);

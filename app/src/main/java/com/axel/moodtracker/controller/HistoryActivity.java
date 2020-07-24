@@ -23,7 +23,6 @@ import java.util.ArrayList;
 public class HistoryActivity extends AppCompatActivity {
 
     private ArrayList<Mood> moodArrayList;
-    //private ArrayList distinctList;
     private RecyclerView mRecyclerView;
     private LinearLayout linearNoDataFound;
     private MoodAdapter mAdapter;
@@ -59,7 +58,6 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void updateArrayList(Mood mood) {
-
         if (moodArrayList == null) {
             linearNoDataFound.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.INVISIBLE);
@@ -78,17 +76,6 @@ public class HistoryActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private void sizeMoodList(ArrayList<Mood> moodArrayList) {
-
-        if (moodArrayList.size() > 7) {
-            int i = 6;
-            do {
-                moodArrayList.remove(i);
-                i++;
-            } while (moodArrayList.size() > 7);
-        }
-    }
-
     private void insertItem(Mood mood) {
         if (moodArrayList.size() > 1) {
             for (int i = 0; i < moodArrayList.size(); i++) {
@@ -98,11 +85,7 @@ public class HistoryActivity extends AppCompatActivity {
                     moodArrayList.remove(i);
                 }
             }
-
-            if (moodArrayList.size() > 7){
-
-            }
-
+            sizeMoodList(moodArrayList, 6);
         }
         moodArrayList.add(mood);
         mAdapter.notifyItemInserted(moodArrayList.size());
@@ -133,6 +116,17 @@ public class HistoryActivity extends AppCompatActivity {
         moodArrayList = gson.fromJson(json, type);
         if (moodArrayList == null) {
             moodArrayList = new ArrayList<>();
+        }
+        sizeMoodList(moodArrayList, 7);
+    }
+
+    private void sizeMoodList(ArrayList<Mood> moodArrayList, int countIncrement) {
+        if (moodArrayList.size() > countIncrement) {
+            int i = 0;
+            do {
+                moodArrayList.remove(i);
+                i++;
+            } while (moodArrayList.size() > 7);
         }
     }
 }
