@@ -12,18 +12,23 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.PagerAdapter;
+
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.ViewPager.VerticalViewPager;
 import com.axel.moodtracker.adapter.PageAdapter;
 import com.axel.moodtracker.alarm.AlertReceiver;
+import com.axel.moodtracker.model.Mood;
 import com.axel.moodtracker.utils.Constants;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.muddzdev.styleabletoast.StyleableToast;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MoodActivity extends AppCompatActivity {
@@ -32,6 +37,7 @@ public class MoodActivity extends AppCompatActivity {
     private FragmentManager manager;
     private VerticalViewPager pager;
     private Boolean isMoodSavedYesterday = false;
+    private ArrayList<Mood> moodArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,9 +124,7 @@ public class MoodActivity extends AppCompatActivity {
         Calendar calForDate = Calendar.getInstance();
         SimpleDateFormat currentDate = new SimpleDateFormat("dd MMM yyyy");
         saveCurrentDate = currentDate.format(calForDate.getTime());
-        setTime(Constants.HOUR_SCHEDULE,
-                Constants.MINUTE_SCHEDULE,
-                recentComment,
+        setTime(recentComment,
                 getColorByPosition(currentItem),
                 saveCurrentDate,
                 getMoodImageByPosition(currentItem),
@@ -151,27 +155,36 @@ public class MoodActivity extends AppCompatActivity {
         finish();
     }
 
-    private void setTime(int hourOfDay, int minute, String recentComment, int colorByPosition, String saveCurrentDate, int moodImageByPosition, int currentItem) {
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        c.set(Calendar.MINUTE, minute);
-        c.set(Calendar.SECOND, 0);
-        startAlarm(c, recentComment, colorByPosition, saveCurrentDate, moodImageByPosition, currentItem);
+    private void setTime(String recentComment, int colorByPosition, String saveCurrentDate, int moodImageByPosition, int currentItem) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 24);
+        calendar.set(Calendar.MINUTE, 00);
+        calendar.set(Calendar.SECOND, 0);
+        startAlarm(calendar, recentComment, colorByPosition, saveCurrentDate, moodImageByPosition, currentItem);
     }
 
-    private void startAlarm(Calendar c, String recentComment, int colorByPosition, String saveCurrentDate, int moodImageByPosition, int currentItem) {
+    private void startAlarm(Calendar calendar, String recentComment, int colorByPosition, String saveCurrentDate, int moodImageByPosition, int currentItem) {
         isMoodSavedYesterday = true;
-        saveRecentData(recentComment, colorByPosition, saveCurrentDate, moodImageByPosition, isMoodSavedYesterday, currentItem);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
         Intent intent = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
-        if (c.before(Calendar.getInstance())) {
-            c.add(Calendar.DATE, 1);
-        }
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.RECENT_COMMENT, recentComment);
+        bundle.putInt(Constants.COLOR_BY_POSITION, colorByPosition);
+        bundle.putString(Constants.SAVE_CURRENT_DATE, saveCurrentDate);
+        bundle.putInt(Constants.MOOD_IMAGE_BY_POSITION, moodImageByPosition);
+        bundle.putInt(Constants.CURRENT_ITEM, currentItem);
+        intent.putExtras(bundle);
+
+        PendingIntent sender = PendingIntent.getBroadcast(this, 2, intent, 0);
 
         if (alarmManager != null) {
-            long triggerAfter = Constants.remainingTimeToReachMidnight();
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, triggerAfter, AlarmManager.INTERVAL_DAY, pendingIntent);
+            if (calendar.after(Calendar.getInstance())) {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+            }
+            if (calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DATE, 1);
+            }
         }
         displayMessage(getResources().getString(R.string.mood_saved_tomorrow));
     }
@@ -183,17 +196,5 @@ public class MoodActivity extends AppCompatActivity {
                 .textColor(Color.WHITE)
                 .backgroundColor(Color.GREEN)
                 .show();
-    }
-
-    private void saveRecentData(String recentComment, int colorByPosition, String saveCurrentDate, int moodImageByPosition, Boolean isMoodSavedYesterday, int currentItem) {
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.RECENT_MOOD, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.RECENT_COMMENT, recentComment);
-        editor.putInt(Constants.COLOR_BY_POSITION, colorByPosition);
-        editor.putString(Constants.SAVE_CURRENT_DATE, saveCurrentDate);
-        editor.putInt(Constants.MOOD_IMAGE_BY_POSITION, moodImageByPosition);
-        editor.putBoolean(Constants.MOOD_SAVED_YESTERDAY, isMoodSavedYesterday);
-        editor.putInt(Constants.CURRENT_ITEM, currentItem);
-        editor.apply();
     }
 }

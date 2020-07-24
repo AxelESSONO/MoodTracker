@@ -6,12 +6,13 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:id="@+id/fragment_page_rootview"
-    tools:context=".MoodFragment">
+    tools:context="com.axel.moodtracker.fragment.MoodFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <ImageView
         android:id="@+id/mood_image"
         android:layout_width="350dp"
-        android:layout_height="350dp"/>
+        android:layout_height="350dp"
+        android:contentDescription="@string/description" />
 
 </LinearLayout>

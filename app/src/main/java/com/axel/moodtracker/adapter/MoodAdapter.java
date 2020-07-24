@@ -53,6 +53,7 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
         holder.relativeLayout.setBackgroundColor(moodList.get(position).getColor());
         final String comment = String.valueOf(moodList.get(position).getComment());
         setRelativeLayout(holder, position);
+
         holder.commentImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
