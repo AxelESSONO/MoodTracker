@@ -41,9 +41,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }, Constants.FOUR_SECOND);
     }
-
     private void getData() {
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.RECENT_MOOD, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.MOOD_TMP, MODE_PRIVATE);
         int colorByPosition = sharedPreferences.getInt(Constants.COLOR_BY_POSITION, getResources().getIntArray(R.array.colorPagesViewPager)[3]);
         int moodImageByPosition = sharedPreferences.getInt(Constants.MOOD_IMAGE_BY_POSITION, R.drawable.d_smiley_happy);
         upDateView(colorByPosition, moodImageByPosition);

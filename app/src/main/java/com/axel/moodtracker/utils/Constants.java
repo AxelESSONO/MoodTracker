@@ -8,6 +8,7 @@ public class Constants {
 
     public static final String MOOD_LIST = "mood list";
     public static final String MOOD_INTENT = "MOOD_INTENT";
+    public static final String MOOD_TMP = "mood_tmp";
     public static final String PREF_DATA = "PREF_DATA";
     public static final String IMAGE_RESSOURCE = "IMAGE RESSOURCE";
     public static final String IMAGE_COLOR = "IMAGE COLOR";
@@ -23,6 +24,8 @@ public class Constants {
     public static final String COLOR_MOOD = "colorMood";
     public static final String IMAGE = "Images";
     public static final String MOOD = "mood";
+    public static final String COME_FROM_MOOD_ACTIVITY = "COME FROM MOOD ACTIVITY";
+    public static final String TODAY_MOOD = "TODAY_MOOD";
     private static final String PREF_KEY_IMAGE = "PREF_KEY_IMAGE";
     private static final String PREF_KEY_COLOR = "PREF_KEY_COLOR";
     public static final String channelID = "channelID";

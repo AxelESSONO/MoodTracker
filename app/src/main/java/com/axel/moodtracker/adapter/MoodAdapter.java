@@ -52,9 +52,9 @@ public class MoodAdapter extends RecyclerView.Adapter<MoodAdapter.MoodViewHolder
 
         holder.relativeLayout.setBackgroundColor(moodList.get(position).getColor());
         final String comment = String.valueOf(moodList.get(position).getComment());
-        if(comment.equals("")) {
+        if (comment.equals("")) {
             holder.commentImg.setVisibility(View.INVISIBLE);
-        }else {
+        } else {
             holder.commentImg.setVisibility(View.VISIBLE);
         }
 

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -77,18 +78,19 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void insertItem(Mood mood) {
-        if (moodArrayList.size() > 1) {
-            for (int i = 0; i < moodArrayList.size(); i++) {
-                String date = mood.getDate();
-                String dateSaveInData = moodArrayList.get(i).getDate();
-                if (dateSaveInData.equals(date)) {
+        String dateMood = mood.getDate();
+        if (moodArrayList.size() > 0) {
+            int i = 0;
+            do {
+                String dateSave = moodArrayList.get(i).getDate();
+                if (dateSave.equals(dateMood)){
                     moodArrayList.remove(i);
                 }
-            }
-            sizeMoodList(moodArrayList, 6);
+                i++;
+            } while ( i < moodArrayList.size());
         }
         moodArrayList.add(mood);
-        mAdapter.notifyItemInserted(moodArrayList.size());
+        mAdapter.notifyDataSetChanged();
     }
 
     private void initRecyclerView() {
@@ -104,7 +106,9 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        startActivity(new Intent(HistoryActivity.this, MoodActivity.class));
+        Intent moodActivityIntent = new Intent(HistoryActivity.this, MoodActivity.class);
+        moodActivityIntent.putExtra(Constants.COME_FROM_MOOD_ACTIVITY, true);
+        startActivity(moodActivityIntent);
     }
 
     private void loadData() {
@@ -116,8 +120,9 @@ public class HistoryActivity extends AppCompatActivity {
         moodArrayList = gson.fromJson(json, type);
         if (moodArrayList == null) {
             moodArrayList = new ArrayList<>();
+        } else {
+            sizeMoodList(moodArrayList, 6);
         }
-        sizeMoodList(moodArrayList, 7);
     }
 
     private void sizeMoodList(ArrayList<Mood> moodArrayList, int countIncrement) {

@@ -53,15 +53,6 @@ public class ContactsActivity extends AppCompatActivity {
         });
     }
 
-    // retreive the data
-    private void retreiveData() {
-        retreiveComment = getIntent().getStringExtra(Constants.MY_COMMENT);
-        retreiveColor = getIntent().getIntExtra(Constants.COLOR_MOOD, 3);
-        image = getIntent().getIntExtra(Constants.CURRENT_ITEM, R.drawable.d_smiley_happy);
-        Glide.with(this).load(Constants.mImageRessource[image]).into(imageView);
-        txtMessage.setText(retreiveComment);
-    }
-
     private void initView() {
         phone = (TextView) findViewById(R.id.phone);
         txtMessage = (TextView) findViewById(R.id.message_contact);
@@ -78,6 +69,15 @@ public class ContactsActivity extends AppCompatActivity {
         });
     }
 
+    // retreive the data
+    private void retreiveData() {
+        retreiveComment = getIntent().getStringExtra(Constants.MY_COMMENT);
+        retreiveColor = getIntent().getIntExtra(Constants.COLOR_MOOD, 3);
+        image = getIntent().getIntExtra(Constants.CURRENT_ITEM, R.drawable.d_smiley_happy);
+        Glide.with(this).load(Constants.mImageRessource[image]).into(imageView);
+        txtMessage.setText(retreiveComment);
+    }
+
     private void selectContact() {
         Intent in = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
         startActivityForResult(in, Constants.RESULT_PICK_CONTACT);
@@ -85,9 +85,6 @@ public class ContactsActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-
-        /*SharedPreferences prefs = getSharedPreferences(Constants.PREF_PHONE, MODE_PRIVATE);
-        String phoneNumber = prefs.getString(Constants.PHONE_NUMBER, Constants.DEFAULT_PHONE);*/
 
         String phoneNumber = phone.getText().toString();
 
@@ -112,7 +109,6 @@ public class ContactsActivity extends AppCompatActivity {
             String chooseNumberPhone = getResources().getString(R.string.choose_number_phone);
             displayToast(getApplicationContext(), chooseNumberPhone);
         }
-        //prefs.edit().clear().commit();
     }
 
     private void displayToast(Context applicationContext, String retreiveComment) {

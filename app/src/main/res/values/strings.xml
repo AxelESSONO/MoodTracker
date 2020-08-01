@@ -34,5 +34,7 @@
     <string name="the_message_to_send">The message to send</string>
     <string name="click_here_to_select_recipient">Click here to select recipient</string>
     <string name="send_message">Send message</string>
+    <string name="mood_saved_successfully">Mood Saved Successfully!!</string>
+    <string name="phone_number">Phone number</string>
 
 </resources>

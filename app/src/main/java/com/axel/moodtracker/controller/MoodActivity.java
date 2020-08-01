@@ -1,41 +1,46 @@
 package com.axel.moodtracker.controller;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import com.axel.moodtracker.R;
 import com.axel.moodtracker.ViewPager.VerticalViewPager;
 import com.axel.moodtracker.adapter.PageAdapter;
 import com.axel.moodtracker.alarm.AlertReceiver;
+import com.axel.moodtracker.model.Mood;
 import com.axel.moodtracker.utils.Constants;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.muddzdev.styleabletoast.StyleableToast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import es.dmoral.toasty.Toasty;
 
 public class MoodActivity extends AppCompatActivity {
 
     private FloatingActionButton addComment, historyMood;
     private FragmentManager manager;
     private VerticalViewPager pager;
-    private String recentComment;
+    private String recentComment = "";
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +57,7 @@ public class MoodActivity extends AppCompatActivity {
         // 2 - Set Adapter PageAdapter and glue it together
         PagerAdapter pagerAdapter = new PageAdapter(manager, getResources().getIntArray(R.array.colorPagesViewPager));
         configureViewPager(pagerAdapter);
+        //retreiveColorMoodDrawable("", pager.getCurrentItem());
 
         // To display popup where the the comment will be written
         addComment.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +73,21 @@ public class MoodActivity extends AppCompatActivity {
                 startActivity(historyIntent);
             }
         });
+
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                retreiveColorMoodDrawable("", position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
     }
 
     // Display popup
@@ -102,7 +123,9 @@ public class MoodActivity extends AppCompatActivity {
     // Check if comment is empty
     private void checkComment(String recentComment, EditText mComent, int currentItem) {
         if (recentComment.equals("")) {
-            mComent.setError(getResources().getString(R.string.no_comment_error));
+            //mComent.setError(getResources().getString(R.string.no_comment_error));
+            recentComment = "";
+            saveComment(recentComment, mComent, currentItem);
         } else {
             saveComment(recentComment, mComent, currentItem);
         }
@@ -141,9 +164,10 @@ public class MoodActivity extends AppCompatActivity {
     // save mood here
     private void configureViewPager(PagerAdapter pagerAdapter) {
         pager.setAdapter(pagerAdapter);
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.RECENT_MOOD, MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.MOOD_TMP, MODE_PRIVATE);
         int itemCurrent = sharedPreferences.getInt(Constants.CURRENT_ITEM, 3);
         pager.setCurrentItem(itemCurrent); // Setting default MoodFragment
+
     }
 
     @Override
@@ -164,33 +188,54 @@ public class MoodActivity extends AppCompatActivity {
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlertReceiver.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(Constants.RECENT_COMMENT, recentComment);
-        bundle.putInt(Constants.COLOR_BY_POSITION, colorByPosition);
-        bundle.putString(Constants.SAVE_CURRENT_DATE, saveCurrentDate);
-        bundle.putInt(Constants.MOOD_IMAGE_BY_POSITION, moodImageByPosition);
-        bundle.putInt(Constants.CURRENT_ITEM, currentItem);
-        intent.putExtras(bundle);
-
         PendingIntent sender = PendingIntent.getBroadcast(this, 2, intent, 0);
-        alarmManager.cancel(sender);
+        //alarmManager.cancel(sender);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.MOOD_TMP, MODE_PRIVATE);
         if (alarmManager != null) {
+
             if (calendar.after(Calendar.getInstance())) {
+                saveSuddentData(sharedPreferences, colorByPosition, moodImageByPosition, currentItem);
+
+                alarmManager.cancel(sender);
+                Mood mood = new Mood(recentComment, colorByPosition, saveCurrentDate, moodImageByPosition, currentItem);
+                saveTodayMood(mood);
+
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
             }
             if (calendar.before(Calendar.getInstance())) {
+                initTmpData(sharedPreferences);
                 calendar.add(Calendar.DATE, 1);
             }
         }
         displayMessage(getResources().getString(R.string.mood_saved_tomorrow));
     }
 
+    private void saveTodayMood(Mood mood) {
+        SharedPreferences recentPreferences = getSharedPreferences(Constants.TODAY_MOOD, MODE_PRIVATE);
+        SharedPreferences.Editor editor = recentPreferences.edit();
+        editor.putString(Constants.RECENT_COMMENT, mood.getComment());
+        editor.putInt(Constants.COLOR_BY_POSITION, mood.getColor());
+        editor.putString(Constants.SAVE_CURRENT_DATE, mood.getDate());
+        editor.putInt(Constants.MOOD_IMAGE_BY_POSITION, mood.getmImage());
+        editor.putInt(Constants.CURRENT_ITEM, mood.getmMoodPosition());
+        editor.commit();
+    }
+
+    private void initTmpData(SharedPreferences sharedPreferences) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear().commit();
+    }
+
+    private void saveSuddentData(SharedPreferences sharedPreferences, int colorByPosition, int moodImageByPosition, int currentItem) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(Constants.COLOR_BY_POSITION, colorByPosition);
+        editor.putInt(Constants.MOOD_IMAGE_BY_POSITION, moodImageByPosition);
+        editor.putInt(Constants.CURRENT_ITEM, currentItem);
+        editor.commit();
+    }
+
     private void displayMessage(String message) {
-        new StyleableToast
-                .Builder(this)
-                .text(message)
-                .textColor(Color.WHITE)
-                .backgroundColor(Color.GREEN)
-                .show();
+        Toasty.info(this, message, Toast.LENGTH_SHORT, true).show();
     }
 }

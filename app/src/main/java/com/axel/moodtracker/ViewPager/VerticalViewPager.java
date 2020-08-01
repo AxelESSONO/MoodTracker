@@ -8,6 +8,7 @@ import androidx.viewpager.widget.ViewPager;
 
 public class VerticalViewPager extends ViewPager
 {
+
     public VerticalViewPager(Context context) {
         super(context);
         init();

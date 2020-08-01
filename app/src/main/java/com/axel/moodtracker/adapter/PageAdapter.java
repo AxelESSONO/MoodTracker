@@ -19,12 +19,12 @@ public class PageAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return(5); // 3 - Number of page to show
+        return (5); // 3 - Number of page to show
     }
 
     @Override
     public Fragment getItem(int position) {
         // 5 - Page to return
-        return(MoodFragment.newInstance(position, this.colors[position]));
+        return (MoodFragment.newInstance(position, colors[position]));
     }
 }

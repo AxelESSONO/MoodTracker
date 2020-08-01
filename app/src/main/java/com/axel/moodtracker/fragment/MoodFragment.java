@@ -9,17 +9,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+
 import com.axel.moodtracker.R;
 import com.bumptech.glide.Glide;
+
 import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 @RequiresApi(api = Build.VERSION_CODES.M)
-public class MoodFragment extends Fragment{
+public class MoodFragment extends Fragment {
+
 
     // 1 - Create keys for our Bundle
     private static final String KEY_POSITION = "position";
@@ -29,12 +33,12 @@ public class MoodFragment extends Fragment{
     private static final String POSITION = "POSITION";
     SharedPreferences.Editor editor;
     SharedPreferences preferences;
-
     private int mImageRessource[] = {R.drawable.a_smiley_disappointed,
             R.drawable.b_smiley_sad,
             R.drawable.c_smiley_normal,
             R.drawable.d_smiley_happy,
             R.drawable.e_smiley_super_happy};
+
 
     public MoodFragment() {
         // Required empty public constructor
@@ -52,7 +56,7 @@ public class MoodFragment extends Fragment{
         args.putInt(KEY_COLOR, color);
         frag.setArguments(args);
 
-        return(frag);
+        return (frag);
     }
 
     @Override
@@ -62,7 +66,7 @@ public class MoodFragment extends Fragment{
         View result = inflater.inflate(R.layout.fragment_mood, container, false);
 
         // 4 - Get widgets from layout and serialise it
-        LinearLayout rootView= (LinearLayout) result.findViewById(R.id.fragment_page_rootview);
+        LinearLayout rootView = (LinearLayout) result.findViewById(R.id.fragment_page_rootview);
         //TextView textView= (TextView) result.findViewById(R.id.fragment_page_title);
         ImageView moodImage = (ImageView) result.findViewById(R.id.mood_image);
 
@@ -73,8 +77,11 @@ public class MoodFragment extends Fragment{
         // 6 - Update widgets with it
         rootView.setBackgroundColor(color);
 
+
+
         Glide.with(getContext()).load(mImageRessource[position]).into(moodImage);
         passFragmentData(position, color);
+
         return result;
     }
 
