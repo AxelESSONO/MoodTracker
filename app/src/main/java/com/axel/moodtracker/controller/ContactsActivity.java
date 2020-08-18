@@ -2,7 +2,6 @@ package com.axel.moodtracker.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -136,7 +135,7 @@ public class ContactsActivity extends AppCompatActivity {
                     break;
             }
         } else {
-            String noContactSelected = getResources().getString(R.string.no_contact_selected);
+            String noContactSelected =  getResources().getString(R.string.no_contact_selected);
             displayToast(getApplicationContext(), noContactSelected);
         }
     }
